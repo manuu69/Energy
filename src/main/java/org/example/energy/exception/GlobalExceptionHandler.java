@@ -40,7 +40,6 @@ public class GlobalExceptionHandler {
                 .map(f -> new FieldErrorDTO(f.getField(), f.getDefaultMessage()))
                 .toList();
 
-        // Usamos el método completo con la lista de validaciones
         ErrorResponseDTO errorDTO = errorMapper.toErrorResponseDTO(
                 ec,
                 "Error de validación en los datos de entrada",
@@ -49,6 +48,22 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(ec.getHttpStatus()).body(errorDTO);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponseDTO> handleTypeMismatch(
+            MethodArgumentTypeMismatchException ex,
+            HttpServletRequest request
+    ) {
+        ErrorCode ec = ErrorCode.INVALID_INPUT;
+
+        ErrorResponseDTO errorResponseDTO = errorMapper.toErrorResponseDTO(
+                ec,
+                "El parámetro de la ruta no coincide con el tipo esperado",
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(ec.getHttpStatus()).body(errorResponseDTO);
     }
 
     @ExceptionHandler(Exception.class)
