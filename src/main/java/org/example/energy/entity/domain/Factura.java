@@ -2,6 +2,7 @@ package org.example.energy.entity.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.energy.enums.EstadoPago;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,8 +32,9 @@ public class Factura {
     @Column(name = "importe", nullable = false, precision = 10, scale = 2)
     private BigDecimal importe;
 
-    @Column(name = "estado_pago", length = 20)
-    private String estadoPago;  // pagada, pendiente, vencida
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_pago", nullable = false)
+    private EstadoPago estadoPago;
 
     @Column(name = "fecha_vencimiento", nullable = false)
     private LocalDate fechaVencimiento;

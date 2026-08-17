@@ -18,6 +18,6 @@ public interface FacturaMapper {
     List<FacturaResponseDTO> toDTOList(List<Factura> facturas);
 
     @Mapping(target = "facturaId", ignore = true)
-    @Mapping(target = "contrato.contratoId", source = "contratoId")
+    @Mapping(target = "contrato", ignore = true)
     Factura toEntity(FacturaCreateDTO dto);
 }

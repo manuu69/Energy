@@ -26,7 +26,7 @@ public class Contrato {
     private Cliente cliente;
 
     @Column(name = "tarifa", length = 10)
-    private String tarifa;  // 2.0TD, 3.0TD, 6.1TD, 3.1TD
+    private String tarifa;
 
     @Column(name = "potencia_kw", precision = 6, scale = 2)
     private BigDecimal potenciaKw;
@@ -35,7 +35,7 @@ public class Contrato {
     private LocalDate fechaInicio;
 
     @Column(name = "estado", length = 20)
-    private String estado;  // activo, baja, suspendido
+    private String estado;
 
     // Relación con Zona
     @ManyToOne(fetch = FetchType.LAZY)

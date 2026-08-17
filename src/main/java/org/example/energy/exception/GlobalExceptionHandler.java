@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ec.getHttpStatus()).body(errorDTO);
     }
 
-    // Error de validación de campos @Valid (400)
+    // Error validacion
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidation(
             MethodArgumentNotValidException ex, HttpServletRequest request) {

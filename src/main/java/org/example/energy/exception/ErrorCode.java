@@ -58,7 +58,7 @@ public enum ErrorCode {
 
     CLIENTE_CON_DEUDA_PENDIENTE(
             "ERR_102",
-            "El cliente tiene deuda pendiente, no se puede dar de baja",
+            "El cliente tiene deuda PENDIENTE, no se puede dar de baja",
             HttpStatus.UNPROCESSABLE_CONTENT
     ),
 

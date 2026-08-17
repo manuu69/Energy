@@ -21,8 +21,8 @@ public record FacturaCreateDTO(
 
         @NotBlank(message = "El estado de pago es obligatorio")
         @Pattern(
-                regexp = "^(PENDIENTE|PAGADA|CANCELADA)$",
-                message = "El estado de pago debe ser 'PENDIENTE', 'PAGADA' o 'CANCELADA'"
+                regexp = "^(pendiente|pagada|cancelada)$",
+                message = "El estado de pago debe ser 'PENDIENTE', 'pagada' o 'cancelada'"
         )
         String estadoPago,
 
