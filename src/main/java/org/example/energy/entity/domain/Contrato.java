@@ -2,6 +2,7 @@ package org.example.energy.entity.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.energy.enums.EstadoContrato;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,8 +35,9 @@ public class Contrato {
     @Column(name = "fecha_inicio", nullable = false)
     private LocalDate fechaInicio;
 
-    @Column(name = "estado", length = 20)
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", nullable = false)
+    private EstadoContrato estado;
 
     // Relación con Zona
     @ManyToOne(fetch = FetchType.LAZY)

@@ -5,6 +5,7 @@ import org.example.energy.dto.FacturaCreateDTO;
 import org.example.energy.dto.FacturaResponseDTO;
 import org.example.energy.entity.domain.Contrato;
 import org.example.energy.entity.domain.Factura;
+import org.example.energy.enums.EstadoContrato;
 import org.example.energy.enums.EstadoPago;
 import org.example.energy.exception.BusinessRuleException;
 import org.example.energy.exception.ErrorCode;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -55,6 +57,26 @@ public class FacturaServiceImpl implements FacturaService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Contrato no encontrado con el ID: " + dto.contratoId()
                 ));
+
+        if (contrato.getEstado() != EstadoContrato.ACTIVO) {
+            throw new BusinessRuleException(
+                    ErrorCode.CONTRATO_NO_ACTIVO.name()
+            );
+        }
+
+        LocalDate fechaEmision = dto.fechaEmision();
+        LocalDate inicioMes = fechaEmision.withDayOfMonth(1);
+        LocalDate finMes = fechaEmision.withDayOfMonth(fechaEmision.lengthOfMonth());
+        boolean yaExisteFactura = facturaRepository.existsByContratoContratoIdAndFechaEmisionBetween(
+                dto.contratoId(),
+                inicioMes,
+                finMes
+        );
+        if (yaExisteFactura) {
+            throw new BusinessRuleException(
+                    ErrorCode.BUSINESS_RULE_VIOLATION.name()
+            );
+        }
 
         Factura factura = mapper.toEntity(dto);
         factura.setContrato(contrato);

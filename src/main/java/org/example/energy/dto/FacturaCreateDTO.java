@@ -1,6 +1,7 @@
 package org.example.energy.dto;
 
 import jakarta.validation.constraints.*;
+import org.example.energy.enums.EstadoPago;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,10 +22,10 @@ public record FacturaCreateDTO(
 
         @NotBlank(message = "El estado de pago es obligatorio")
         @Pattern(
-                regexp = "^(pendiente|pagada|cancelada)$",
-                message = "El estado de pago debe ser 'PENDIENTE', 'pagada' o 'cancelada'"
+                regexp = "^(PENDIENTE|PAGADA|CANCELADA)$",
+                message = "El estado de pago debe ser 'PENDIENTE', 'PAGADA' o 'CANCELADA'"
         )
-        String estadoPago,
+        EstadoPago estadoPago,
 
         @NotNull(message = "La fecha de vencimiento es obligatoria")
         LocalDate fechaVencimiento
