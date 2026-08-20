@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
-public record ClienteCreateDTO(
+public record ClienteUpdateDTO(
 
         @NotBlank(message = "El nombre es obligatorio")
         @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
@@ -25,13 +25,9 @@ public record ClienteCreateDTO(
         @Size(max = 50, message = "La ciudad no puede superar los 50 caracteres")
         String ciudad,
 
-        @NotNull(message = "La fecha de alta es obligatoria")
-        @PastOrPresent(message = "La fecha de alta no puede ser futura")
-        LocalDate fechaAlta,
-
         @Pattern(
-                regexp = "^(?i)(NUEVO|REGULAR|PREMIUM|VIP)$",
-                message = "El segmento debe ser 'NUEVO', 'REGULAR', 'PREMIUM' o 'VIP'"
+                regexp = "^(?i)(Nuevo|Regular|Premium|VIP)$",
+                message = "El segmento debe ser 'Nuevo', 'Regular', 'Premium' o 'VIP'"
         )
         String segmento
 ) {

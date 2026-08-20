@@ -60,9 +60,6 @@ public class FacturaServiceImpl implements FacturaService {
         log.debug("Buscando factura con id={}", id);
 
         Factura factura = findById(id);
-
-        log.info("Factura encontrada con id={}", id);
-
         return mapper.toDTO(factura);
     }
 
@@ -274,7 +271,6 @@ public class FacturaServiceImpl implements FacturaService {
     }
 
     private Factura findById(Integer id) {
-        log.debug("Buscando entidad Factura con id={}", id);
 
         return facturaRepository.findById(id)
                 .orElseThrow(() -> {
