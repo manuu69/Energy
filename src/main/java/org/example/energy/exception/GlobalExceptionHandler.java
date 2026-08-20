@@ -2,6 +2,7 @@ package org.example.energy.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.energy.dto.ErrorResponseDTO;
 import org.example.energy.dto.FieldErrorDTO;
 import org.example.energy.mapper.ErrorMapper;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
+@Slf4j
 @AllArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,8 +25,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleResourceNotFound(
             ResourceNotFoundException ex, HttpServletRequest request) {
 
+        log.warn("Recurso no encontrado. path={}, message={}",
+                request.getRequestURI(),
+                ex.getMessage()
+        );
         ErrorCode ec = ErrorCode.RESOURCE_NOT_FOUND;
-        // Usamos el mapper enviando la ex.getMessage() personalizada
         ErrorResponseDTO errorDTO = errorMapper.toErrorResponseDTO(ec, ex.getMessage(), request.getRequestURI());
 
         return ResponseEntity.status(ec.getHttpStatus()).body(errorDTO);
@@ -55,6 +60,10 @@ public class GlobalExceptionHandler {
             MethodArgumentTypeMismatchException ex,
             HttpServletRequest request
     ) {
+        log.warn("Tipo de parámetro inválido. path={}, message={}",
+                request.getRequestURI(),
+                ex.getMessage()
+        );
         ErrorCode ec = ErrorCode.INVALID_INPUT;
 
         ErrorResponseDTO errorResponseDTO = errorMapper.toErrorResponseDTO(
@@ -66,10 +75,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ec.getHttpStatus()).body(errorResponseDTO);
     }
 
+
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGenericException(
             Exception ex, HttpServletRequest request) {
 
+        log.error("Error inesperado. path={}", request.getRequestURI(), ex);
         ErrorCode ec = ErrorCode.INTERNAL_ERROR;
         return ResponseEntity.status(ec.getHttpStatus())
                 .body(errorMapper.toErrorResponseDTO(

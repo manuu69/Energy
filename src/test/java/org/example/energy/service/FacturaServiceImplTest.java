@@ -236,6 +236,7 @@ public class FacturaServiceImplTest {
 
         verify(facturaRepository).findById(id);
         verify(facturaMapper).toDTO(factura);
+        assertThat(factura.getEstadoPago()).isEqualTo(EstadoPago.PAGADA);
     }
 
     @Test
@@ -256,5 +257,166 @@ public class FacturaServiceImplTest {
         verify(facturaRepository, never()).save(any());
         verifyNoInteractions(facturaMapper);
     }
+
+    @Test
+    void payFactura_whenFacturaIsCancelada_shouldThrowBusinessRuleException() {
+        Integer id = 1;
+
+        Factura factura = crearFacturaCancelada();
+
+        when(facturaRepository.findById(id)).thenReturn(Optional.of(factura));
+
+        assertThatThrownBy(() -> facturaService.pagarFactura(id))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessageContaining(ErrorCode.BUSINESS_RULE_VIOLATION.name());
+
+        assertThat(factura.getEstadoPago()).isEqualTo(EstadoPago.CANCELADA);
+
+        verify(facturaRepository).findById(id);
+        verify(facturaRepository, never()).save(any());
+        verifyNoInteractions(facturaMapper);
+
+    }
+
+    @Test
+    void payFactura_whenFacturaDoesNotExist_shouldThrowResourceNotFoundException() {
+        Integer id = 999;
+
+        when(facturaRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> facturaService.pagarFactura(id))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Factura no encontrada");
+
+        verify(facturaRepository).findById(id);
+        verifyNoInteractions(facturaMapper);
+        verify(facturaRepository, never()).save(any());
+    }
+
+    @Test
+    void cancelarFactura_whenFacturaIsPending_ShouldChangeStatusToCancelada() {
+        Integer id = 1;
+
+        Factura factura = crearFacturaPendiente();
+        FacturaResponseDTO dto = crearFacturaResponseDTOConEstado(EstadoPago.CANCELADA);
+
+        when(facturaRepository.findById(id)).thenReturn(Optional.of(factura));
+        when(facturaMapper.toDTO(factura)).thenReturn(dto);
+
+        FacturaResponseDTO result = facturaService.cancelarFactura(id);
+
+        assertThat(result).isNotNull();
+        assertThat(result.estadoPago()).isEqualTo(EstadoPago.CANCELADA);
+        assertThat(factura.getEstadoPago()).isEqualTo(EstadoPago.CANCELADA);
+
+        verify(facturaRepository).findById(id);
+        verify(facturaMapper).toDTO(factura);
+        verify(facturaRepository, never()).save(any());
+    }
+
+    @Test
+    void cancelarFactura_whenFacturaDoesNotExist_ShouldThrowResourceNotFoundException() {
+        Integer id = 99;
+
+        when(facturaRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> facturaService.cancelarFactura(id))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Factura no encontrada");
+
+        verify(facturaRepository).findById(id);
+        verify(facturaRepository, never()).save(any());
+        verifyNoInteractions(facturaMapper);
+    }
+
+    @Test
+    void cancelarFactura_whenFacturaIsPagada_ShouldThrowBusinessRuleException() {
+        Integer id = 1;
+
+        Factura factura = crearFacturaPagada();
+
+        when(facturaRepository.findById(id)).thenReturn(Optional.of(factura));
+
+        assertThatThrownBy(() -> facturaService.cancelarFactura(id))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessageContaining(ErrorCode.FACTURA_YA_PAGADA.name());
+
+        assertThat(factura.getEstadoPago()).isEqualTo(EstadoPago.PAGADA);
+
+        verify(facturaRepository).findById(id);
+        verify(facturaRepository, never()).save(any());
+        verifyNoInteractions(facturaMapper);
+    }
+
+    @Test
+    void cancelarFactura_whenFacturaAlreadyCancelada_ShouldThrowBusinessRuleException() {
+        Integer id = 1;
+
+        Factura factura = crearFacturaCancelada();
+
+        when(facturaRepository.findById(id)).thenReturn(Optional.of(factura));
+
+        assertThatThrownBy(() -> facturaService.cancelarFactura(id))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessageContaining(ErrorCode.BUSINESS_RULE_VIOLATION.name());
+
+        assertThat(factura.getEstadoPago()).isEqualTo(EstadoPago.CANCELADA);
+
+        verify(facturaRepository).findById(id);
+        verify(facturaRepository, never()).save(any());
+        verifyNoInteractions(facturaMapper);
+    }
+
+    @Test
+    void delete_whenFacturaExists_shouldDeleteFactura() {
+        Integer id = 9;
+
+        Factura factura = new Factura();
+        factura.setFacturaId(id);
+        factura.setEstadoPago(EstadoPago.PENDIENTE);
+
+        when(facturaRepository.findById(id)).thenReturn(Optional.of(factura));
+
+        facturaService.deleteById(id);
+
+        verify(facturaRepository).findById(id);
+        verify(facturaRepository).delete(factura);
+    }
+    @Test
+    void delete_whenFacturaDoesNotExist_shouldThrowResourceNotFoundException() {
+        // Arrange
+        Integer id = 999;
+
+        when(facturaRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> facturaService.deleteById(id))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Factura no encontrada");
+
+        verify(facturaRepository).findById(id);
+        verify(facturaRepository, never()).delete(any());
+    }
+
+    @Test
+    void delete_whenFacturaIsPagada_shouldThrowBusinessRuleException() {
+        // Arrange
+        Integer id = 9;
+
+        Factura factura = new Factura();
+        factura.setFacturaId(id);
+        factura.setEstadoPago(EstadoPago.PAGADA);
+
+        when(facturaRepository.findById(id)).thenReturn(Optional.of(factura));
+
+        // Act & Assert
+        assertThatThrownBy(() -> facturaService.deleteById(id))
+                .isInstanceOf(BusinessRuleException.class)
+                .hasMessageContaining(ErrorCode.FACTURA_YA_PAGADA.name());
+
+        verify(facturaRepository).findById(id);
+        verify(facturaRepository, never()).delete(any());
+    }
+
 }
 
