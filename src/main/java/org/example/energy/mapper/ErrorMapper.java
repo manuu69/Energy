@@ -1,8 +1,8 @@
 package org.example.energy.mapper;
 
-import org.example.energy.dto.ErrorResponseDTO;
-import org.example.energy.dto.FieldErrorDTO;
-import org.example.energy.exception.ErrorCode;
+import org.example.energy.dto.error.ErrorResponseDTO;
+import org.example.energy.dto.error.FieldErrorDTO;
+import org.example.energy.exception.code.ErrorCode;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

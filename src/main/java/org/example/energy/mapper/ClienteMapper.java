@@ -1,8 +1,8 @@
 package org.example.energy.mapper;
 
-import org.example.energy.dto.ClienteCreateDTO;
-import org.example.energy.dto.ClienteResponseDTO;
-import org.example.energy.dto.ClienteUpdateDTO;
+import org.example.energy.dto.cliente.ClienteCreateDTO;
+import org.example.energy.dto.cliente.ClienteResponseDTO;
+import org.example.energy.dto.cliente.ClienteUpdateDTO;
 import org.example.energy.entity.domain.Cliente;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

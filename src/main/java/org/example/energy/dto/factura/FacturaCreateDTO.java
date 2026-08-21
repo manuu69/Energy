@@ -1,4 +1,4 @@
-package org.example.energy.dto;
+package org.example.energy.dto.factura;
 
 import jakarta.validation.constraints.*;
 import org.example.energy.enums.EstadoPago;

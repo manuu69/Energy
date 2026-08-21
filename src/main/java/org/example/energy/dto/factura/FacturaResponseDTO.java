@@ -1,4 +1,4 @@
-package org.example.energy.dto;
+package org.example.energy.dto.factura;
 
 import org.example.energy.enums.EstadoPago;
 

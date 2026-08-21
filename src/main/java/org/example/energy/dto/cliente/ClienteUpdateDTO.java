@@ -1,8 +1,6 @@
-package org.example.energy.dto;
+package org.example.energy.dto.cliente;
 
 import jakarta.validation.constraints.*;
-
-import java.time.LocalDate;
 
 public record ClienteUpdateDTO(
 

@@ -1,4 +1,4 @@
-package org.example.energy.dto;
+package org.example.energy.dto.error;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;

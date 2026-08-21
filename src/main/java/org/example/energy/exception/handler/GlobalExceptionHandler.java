@@ -1,10 +1,13 @@
-package org.example.energy.exception;
+package org.example.energy.exception.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.energy.dto.ErrorResponseDTO;
-import org.example.energy.dto.FieldErrorDTO;
+import org.example.energy.dto.error.ErrorResponseDTO;
+import org.example.energy.dto.error.FieldErrorDTO;
+import org.example.energy.exception.code.ErrorCode;
+import org.example.energy.exception.type.MethodArgumentTypeMismatchException;
+import org.example.energy.exception.type.ResourceNotFoundException;
 import org.example.energy.mapper.ErrorMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

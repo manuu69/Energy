@@ -1,7 +1,7 @@
 package org.example.energy.testutil;
 
-import org.example.energy.dto.FacturaCreateDTO;
-import org.example.energy.dto.FacturaResponseDTO;
+import org.example.energy.dto.factura.FacturaCreateDTO;
+import org.example.energy.dto.factura.FacturaResponseDTO;
 import org.example.energy.entity.domain.Contrato;
 import org.example.energy.entity.domain.Factura;
 import org.example.energy.enums.EstadoPago;

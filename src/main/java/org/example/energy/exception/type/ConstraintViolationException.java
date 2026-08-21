@@ -1,4 +1,4 @@
-package org.example.energy.exception;
+package org.example.energy.exception.type;
 
 public class ConstraintViolationException extends RuntimeException {
     public ConstraintViolationException(String message) {

@@ -1,4 +1,4 @@
-package org.example.energy.exception;
+package org.example.energy.exception.code;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

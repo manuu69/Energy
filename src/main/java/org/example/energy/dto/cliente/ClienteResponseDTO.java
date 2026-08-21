@@ -1,4 +1,4 @@
-package org.example.energy.dto;
+package org.example.energy.dto.cliente;
 
 import org.example.energy.enums.TipoCliente;
 

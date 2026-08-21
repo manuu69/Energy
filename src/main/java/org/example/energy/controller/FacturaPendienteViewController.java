@@ -2,7 +2,7 @@ package org.example.energy.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.example.energy.dto.FacturaPendienteResponseDTO;
+import org.example.energy.dto.factura.FacturaPendienteResponseDTO;
 import org.example.energy.service.serviceImpl.FacturaPendienteViewServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

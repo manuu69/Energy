@@ -1,4 +1,4 @@
-package org.example.energy.dto;
+package org.example.energy.dto.lectura;
 
 import jakarta.validation.constraints.*;
 

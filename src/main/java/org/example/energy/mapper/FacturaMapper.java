@@ -1,7 +1,7 @@
 package org.example.energy.mapper;
 
-import org.example.energy.dto.FacturaCreateDTO;
-import org.example.energy.dto.FacturaResponseDTO;
+import org.example.energy.dto.factura.FacturaCreateDTO;
+import org.example.energy.dto.factura.FacturaResponseDTO;
 import org.example.energy.entity.domain.Factura;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

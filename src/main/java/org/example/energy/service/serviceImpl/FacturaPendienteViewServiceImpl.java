@@ -1,9 +1,7 @@
 package org.example.energy.service.serviceImpl;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.example.energy.dto.FacturaPendienteResponseDTO;
+import org.example.energy.dto.factura.FacturaPendienteResponseDTO;
 import org.example.energy.mapper.FacturaPendienteMapper;
 import org.example.energy.repository.view.FacturaPendienteViewRepository;
 import org.example.energy.service.FacturaPendienteViewService;

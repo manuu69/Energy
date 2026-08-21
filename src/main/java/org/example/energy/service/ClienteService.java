@@ -1,8 +1,8 @@
 package org.example.energy.service;
 
-import org.example.energy.dto.ClienteCreateDTO;
-import org.example.energy.dto.ClienteResponseDTO;
-import org.example.energy.dto.ClienteUpdateDTO;
+import org.example.energy.dto.cliente.ClienteCreateDTO;
+import org.example.energy.dto.cliente.ClienteResponseDTO;
+import org.example.energy.dto.cliente.ClienteUpdateDTO;
 import org.example.energy.enums.Segmento;
 import org.example.energy.enums.TipoCliente;
 import org.springframework.data.domain.Page;

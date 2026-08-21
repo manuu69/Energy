@@ -1,14 +1,14 @@
 package org.example.energy.service;
 
-import org.example.energy.dto.FacturaCreateDTO;
-import org.example.energy.dto.FacturaResponseDTO;
+import org.example.energy.dto.factura.FacturaCreateDTO;
+import org.example.energy.dto.factura.FacturaResponseDTO;
 import org.example.energy.entity.domain.Contrato;
 import org.example.energy.entity.domain.Factura;
 import org.example.energy.enums.EstadoContrato;
 import org.example.energy.enums.EstadoPago;
-import org.example.energy.exception.BusinessRuleException;
-import org.example.energy.exception.ErrorCode;
-import org.example.energy.exception.ResourceNotFoundException;
+import org.example.energy.exception.type.BusinessRuleException;
+import org.example.energy.exception.code.ErrorCode;
+import org.example.energy.exception.type.ResourceNotFoundException;
 import org.example.energy.mapper.FacturaMapper;
 import org.example.energy.repository.domain.ContratoRepository;
 import org.example.energy.repository.domain.FacturaRepository;

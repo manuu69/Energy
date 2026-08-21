@@ -1,10 +1,9 @@
 package org.example.energy.service;
 
-import org.example.energy.dto.FacturaCreateDTO;
-import org.example.energy.dto.FacturaResponseDTO;
+import org.example.energy.dto.factura.FacturaCreateDTO;
+import org.example.energy.dto.factura.FacturaResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
