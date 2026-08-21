@@ -2,6 +2,8 @@ package org.example.energy.entity.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.energy.enums.Segmento;
+import org.example.energy.enums.TipoCliente;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -30,8 +32,9 @@ public class Cliente {
     @Column(name = "email", unique = true, length = 150)
     private String email;
 
-    @Column(name = "tipo", length = 20)
-    private String tipo;  // residencial, empresa, industrial
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo", nullable = false)
+    private TipoCliente tipo;
 
     @Column(name = "ciudad", length = 50)
     private String ciudad;
@@ -48,8 +51,9 @@ public class Cliente {
     @Column(name = "eliminado_por", length = 100)
     private String eliminadoPor;
 
-    @Column(name = "segmento", length = 20)
-    private String segmento;  // Nuevo, Regular, Premium, VIP
+    @Enumerated(EnumType.STRING)
+    @Column(name = "segmento", nullable = false)
+    private Segmento segmento;  // Nuevo, Regular, Premium, VIP
 
     @Override
     public final boolean equals(Object o) {
