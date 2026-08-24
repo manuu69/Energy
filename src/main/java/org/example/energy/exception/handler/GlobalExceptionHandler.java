@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ec.getHttpStatus()).body(errorDTO);
     }
 
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class, IllegalArgumentException.class, NumberFormatException.class, HandlerMethodValidationException.class})
     public ResponseEntity<ErrorResponseDTO> handleTypeMismatch(
             MethodArgumentTypeMismatchException ex,
             HttpServletRequest request
@@ -83,6 +84,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGenericException(
             Exception ex, HttpServletRequest request) {
+
+        System.out.println("CLASE REAL DE LA EXCEPCIÓN: " + ex.getClass().getName());
+        if (ex.getCause() != null) {
+            System.out.println("CAUSA DE LA EXCEPCIÓN: " + ex.getCause().getClass().getName());
+        }
 
         log.error("Error inesperado. path={}", request.getRequestURI(), ex);
         ErrorCode ec = ErrorCode.INTERNAL_ERROR;

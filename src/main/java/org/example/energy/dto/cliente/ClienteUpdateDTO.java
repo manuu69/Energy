@@ -1,6 +1,7 @@
 package org.example.energy.dto.cliente;
 
 import jakarta.validation.constraints.*;
+import org.example.energy.enums.Segmento;
 
 public record ClienteUpdateDTO(
 
@@ -23,10 +24,7 @@ public record ClienteUpdateDTO(
         @Size(max = 50, message = "La ciudad no puede superar los 50 caracteres")
         String ciudad,
 
-        @Pattern(
-                regexp = "^(?i)(Nuevo|Regular|Premium|VIP)$",
-                message = "El segmento debe ser 'Nuevo', 'Regular', 'Premium' o 'VIP'"
-        )
-        String segmento
+
+        Segmento segmento
 ) {
 }

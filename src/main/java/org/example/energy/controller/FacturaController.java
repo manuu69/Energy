@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.energy.dto.factura.FacturaCreateDTO;
 import org.example.energy.dto.factura.FacturaResponseDTO;
+import org.example.energy.service.FacturaService;
 import org.example.energy.service.serviceImpl.FacturaServiceImpl;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,7 @@ import java.util.List;
 @RequestMapping("/api/v1/facturas")
 public class FacturaController {
 
-    private final FacturaServiceImpl facturaService;
+    private final FacturaService facturaService;
 
     @GetMapping
     public ResponseEntity<Page<FacturaResponseDTO>> getAll(

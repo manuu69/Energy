@@ -42,8 +42,8 @@ public class Cliente {
     @Column(name = "fecha_alta", nullable = false)
     private LocalDate fechaAlta;
 
-    @Column(name = "eliminado")
-    private Boolean eliminado = false;
+    @Column(name = "eliminado", nullable = false)
+    private boolean eliminado = false;
 
     @Column(name = "fecha_eliminacion")
     private LocalDate fechaEliminacion;

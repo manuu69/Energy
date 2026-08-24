@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.energy.dto.cliente.ClienteCreateDTO;
 import org.example.energy.dto.cliente.ClienteResponseDTO;
+import org.example.energy.dto.cliente.ClienteUpdateDTO;
 import org.example.energy.enums.Segmento;
 import org.example.energy.enums.TipoCliente;
 import org.example.energy.service.serviceImpl.ClienteServiceImpl;
@@ -93,5 +94,16 @@ public class ClienteController {
     @PostMapping
     public ResponseEntity<ClienteResponseDTO> create(@RequestBody @Valid ClienteCreateDTO dto){
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.create(dto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ClienteResponseDTO> update(@PathVariable Integer id, @RequestBody @Valid ClienteUpdateDTO dto){
+        return ResponseEntity.ok().body(clienteService.update(dto, id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id){
+        clienteService.darBaja(id);
+        return ResponseEntity.noContent().build();
     }
 }

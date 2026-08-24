@@ -27,7 +27,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
     @Query(value = "SELECT * FROM public.get_clientes_riesgo()", nativeQuery = true)
     List<Cliente> findClientesEnRiesgo();
 
-    @Modifying
-    @Query(value = "CALL dar_baja_cliente(:id)", nativeQuery = true)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(value = "CALL public.dar_baja_cliente(:id)", nativeQuery = true)
     void darDeBajaCliente(@Param("id") Integer id);
 }

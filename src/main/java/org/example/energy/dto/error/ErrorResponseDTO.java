@@ -14,12 +14,10 @@ public record ErrorResponseDTO(
         String path,
         List<FieldErrorDTO> validationErrors
 ) {
-    // Constructor para errores sin lista de campos
     public ErrorResponseDTO(int status, String errorCode, String error, String message, String path) {
         this(LocalDateTime.now(), status, errorCode, error, message, path, null);
     }
 
-    // Constructor para errores de validación
     public ErrorResponseDTO(int status, String errorCode, String error, String message, String path, List<FieldErrorDTO> validationErrors) {
         this(LocalDateTime.now(), status, errorCode, error, message, path, validationErrors);
     }

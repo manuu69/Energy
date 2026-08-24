@@ -156,7 +156,6 @@ public class ClienteServiceImpl implements ClienteService {
         Cliente cliente = clienteMapper.toEntity(dto);
         cliente.setEliminado(false);
         cliente.setFechaEliminacion(null);
-        cliente.setEliminado(null);
         cliente.setFechaAlta(LocalDate.now());
 
         Cliente savedCliente = clienteRepository.save(cliente);
@@ -171,19 +170,45 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
+    @Transactional
     public ClienteResponseDTO update(ClienteUpdateDTO dto, Integer id) {
-        return null;
+        Cliente cliente = findById(id);
+
+        clienteRepository.findByEmail(dto.email())
+                        .filter(found -> !found.getClienteId().equals(id))
+                                .ifPresent(foundCliente ->{
+                                    log.warn(
+                                            "Actualización rechazada. Email duplicado. email={}, clienteIdExistente={}",
+                                            dto.email(),
+                                            foundCliente.getClienteId()
+                                    );
+
+                                    throw new BusinessRuleException(ErrorCode.DATABASE_CONFLICT.name());
+                                });
+
+        clienteMapper.updateEntityFromDTO(dto, cliente);
+        log.info("Cliente actualizado correctamente con el id {}", cliente.getClienteId());
+
+        return clienteMapper.toDTO(cliente);
     }
 
     @Override
+    @Transactional
     public void darBaja(Integer id) {
+        if (!clienteRepository.existsById(id)){
+            log.warn("Cliente no existe con id={}", id);
+            throw new ResourceNotFoundException(ErrorCode.RESOURCE_NOT_FOUND.name());
+        }
+
+        clienteRepository.darDeBajaCliente(id);
+        log.info("Cliente con el id{} dado de baja correctamente", id);
 
     }
 
     private Cliente findById(Integer id){
         return clienteRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("Factura no encontrado con id={}", id);
+                    log.warn("Cliente no encontrado con id={}", id);
 
                     return new ResourceNotFoundException(
                             "Cliente no encontrado con el ID: " + id
