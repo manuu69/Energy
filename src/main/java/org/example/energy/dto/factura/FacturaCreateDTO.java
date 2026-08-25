@@ -20,11 +20,7 @@ public record FacturaCreateDTO(
         @Positive(message = "El importe debe ser superior a 0.00")
         BigDecimal importe,
 
-        @NotBlank(message = "El estado de pago es obligatorio")
-        @Pattern(
-                regexp = "^(PENDIENTE|PAGADA|CANCELADA)$",
-                message = "El estado de pago debe ser 'PENDIENTE', 'PAGADA' o 'CANCELADA'"
-        )
+        @NotNull
         EstadoPago estadoPago,
 
         @NotNull(message = "La fecha de vencimiento es obligatoria")

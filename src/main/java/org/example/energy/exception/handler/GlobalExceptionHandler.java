@@ -6,14 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.energy.dto.error.ErrorResponseDTO;
 import org.example.energy.dto.error.FieldErrorDTO;
 import org.example.energy.exception.code.ErrorCode;
+import org.example.energy.exception.type.BusinessRuleException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.example.energy.exception.type.MethodArgumentTypeMismatchException;
 import org.example.energy.exception.type.ResourceNotFoundException;
 import org.example.energy.mapper.ErrorMapper;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.List;
 
@@ -59,7 +61,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ec.getHttpStatus()).body(errorDTO);
     }
 
-    @ExceptionHandler({MethodArgumentTypeMismatchException.class, IllegalArgumentException.class, NumberFormatException.class, HandlerMethodValidationException.class})
+    @ExceptionHandler(TypeMismatchException.class)
     public ResponseEntity<ErrorResponseDTO> handleTypeMismatch(
             MethodArgumentTypeMismatchException ex,
             HttpServletRequest request
@@ -77,6 +79,51 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(ec.getHttpStatus()).body(errorResponseDTO);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponseDTO> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, HttpServletRequest request) {
+
+        log.warn(
+                "Body de la petición no legible. path={}, detalle={}",
+                request.getRequestURI(),
+                ex.getMessage()
+        );
+        ErrorCode ec = ErrorCode.MALFORMED_JSON;
+
+        ErrorResponseDTO errorResponseDTO = errorMapper.toErrorResponseDTO(
+                ec,
+                ec.getDefaultMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(ec.getHttpStatus()).body(errorResponseDTO);
+    }
+
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<ErrorResponseDTO> handleBusinessRuleException(
+            BusinessRuleException ex,
+            HttpServletRequest request
+    ) {
+        ErrorCode ec = ErrorCode.BUSINESS_RULE_VIOLATION;
+
+        log.warn(
+                "Regla de negocio incumplida. path={}, errorCode={}, message={}",
+                request.getRequestURI(),
+                ec.name(),
+                ex.getMessage()
+        );
+
+        ErrorResponseDTO errorDTO = errorMapper.toErrorResponseDTO(
+                ec,
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity
+                .status(ec.getHttpStatus())
+                .body(errorDTO);
     }
 
 
