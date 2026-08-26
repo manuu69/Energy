@@ -3,6 +3,7 @@ package org.example.energy.entity.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.energy.enums.EstadoContrato;
+import org.example.energy.enums.TipoTarifa;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,13 +22,12 @@ public class Contrato {
     @Column(name = "contrato_id")
     private Integer contratoId;
 
-    // Relación con Cliente
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
-    @Column(name = "tarifa", length = 10)
-    private String tarifa;
+    @Column(name = "tarifa", length = 10, nullable = false)
+    private TipoTarifa tarifa;
 
     @Column(name = "potencia_kw", precision = 6, scale = 2)
     private BigDecimal potenciaKw;

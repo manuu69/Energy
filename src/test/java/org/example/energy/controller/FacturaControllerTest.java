@@ -73,7 +73,7 @@ public class FacturaControllerTest {
 
     @Test
     void getById_WhenIdIsNotNumeric_returns400() throws Exception {
-        mockMvc.perform(get(API_URL + "abv"))
+        mockMvc.perform(get(API_URL + "/abv"))
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(facturaService);
@@ -170,7 +170,7 @@ public class FacturaControllerTest {
 
     //PATCH PAGAR_FACTURAS
     @Test
-    void pagarFactura_whenFacturaExists_returns200() throws Exception{
+    void pagarFactura_whenFacturaExists_returns200() throws Exception {
         FacturaResponseDTO dto = FacturaTestData.crearFacturaResponseDTOPagada();
         when(facturaService.pagarFactura(1)).thenReturn(dto);
 
@@ -182,7 +182,7 @@ public class FacturaControllerTest {
     }
 
     @Test
-    void pagarFactura_whenFacturaNotExists_returns404() throws Exception{
+    void pagarFactura_whenFacturaNotExists_returns404() throws Exception {
         when(facturaService.pagarFactura(999)).thenThrow(
                 new ResourceNotFoundException("Factura no encontrada")
         );
@@ -194,14 +194,102 @@ public class FacturaControllerTest {
     }
 
     @Test
-    void pagarFactura_whenFacturaYaPagada_returns409() throws Exception{
+    void pagarFactura_whenFacturaYaPagada_returns409() throws Exception {
         when(facturaService.pagarFactura(1)).thenThrow(
-                new BusinessRuleException("La factura ya está pagada")
+                new BusinessRuleException(ErrorCode.FACTURA_YA_PAGADA)
         );
 
         mockMvc.perform(patch(API_URL + "/1/pagar"))
                 .andExpect(status().isConflict());
 
         verify(facturaService).pagarFactura(1);
+    }
+
+    //POST CANCELAR PAGO
+    @Test
+    void cancelarFactura_whenFacturaExists_returns200() throws Exception {
+        FacturaResponseDTO dto = FacturaTestData.crearFacturaResponseDTOCancelada();
+        when(facturaService.cancelarFactura(1)).thenReturn(dto);
+
+        mockMvc.perform(patch(API_URL + "/1/cancelar"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.facturaId").value(1));
+
+        verify(facturaService).cancelarFactura(1);
+    }
+
+    @Test
+    void cancelarFactura_whenFacturaNotExists_returns404() throws Exception {
+        when(facturaService.cancelarFactura(999)).thenThrow(
+                new ResourceNotFoundException("Factura no encontrada")
+        );
+
+        mockMvc.perform(patch(API_URL + "/999/cancelar"))
+                .andExpect(status().isNotFound());
+
+        verify(facturaService).cancelarFactura(999);
+    }
+
+    @Test
+    void cancelarFactura_whenFacturaYaCancelada_returns409() throws Exception {
+        when(facturaService.cancelarFactura(999)).thenThrow(
+                new BusinessRuleException(ErrorCode.FACTURA_YA_CANCELADA)
+        );
+
+        mockMvc.perform(patch(API_URL + "/999/cancelar"))
+                .andExpect(status().isConflict());
+
+        verify(facturaService).cancelarFactura(999);
+    }
+
+    //POST GENERAR FACTURAS MES
+    @Test
+    void generarFacturas_whenMesValido_returns204() throws Exception {
+        doNothing().when(facturaService).generarFacturas(1);
+
+        mockMvc.perform(post(API_URL + "/generar/1"))
+                .andExpect(status().isNoContent());
+        verify(facturaService).generarFacturas(1);
+    }
+
+    @Test
+    void generarFacturas_whenMesInvalido_returns204() throws Exception {
+        mockMvc.perform(post(API_URL + "/generar/abv"))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(facturaService);
+    }
+
+    //DELETE
+    @Test
+    void deleteById_whenFacturaExists_returns204() throws Exception {
+        doNothing().when(facturaService).deleteById(1);
+
+        mockMvc.perform(delete(API_URL + "/1"))
+                .andExpect(status().isNoContent());
+
+        verify(facturaService).deleteById(1);
+    }
+
+    @Test
+    void deleteById_whenFacturaNotExists_returns404() throws Exception {
+        doThrow(new ResourceNotFoundException("Factura no encontrada"))
+                .when(facturaService).deleteById(999);
+
+        mockMvc.perform(delete(API_URL + "/999"))
+                .andExpect(status().isNotFound());
+
+        verify(facturaService).deleteById(999);
+    }
+
+    @Test
+    void deleteById_whenFacturaPagada_returns409() throws Exception {
+        doThrow(new BusinessRuleException(ErrorCode.FACTURA_YA_PAGADA))
+                .when(facturaService).deleteById(1);
+
+        mockMvc.perform(delete(API_URL + "/1"))
+                .andExpect(status().isConflict());
+
+        verify(facturaService).deleteById(1);
     }
 }

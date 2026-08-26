@@ -1,7 +1,7 @@
 package org.example.energy.service.serviceImpl;
 
 import lombok.AllArgsConstructor;
-import org.example.energy.dto.factura.FacturaPendienteResponseDTO;
+import org.example.energy.dto.factura.FacturaResponseDTO;
 import org.example.energy.mapper.FacturaPendienteMapper;
 import org.example.energy.repository.view.FacturaPendienteViewRepository;
 import org.example.energy.service.FacturaPendienteViewService;
@@ -19,7 +19,7 @@ public class FacturaPendienteViewServiceImpl implements FacturaPendienteViewServ
 
     @Override
     @Transactional(readOnly = true)
-    public List<FacturaPendienteResponseDTO> getFacturaPendientes() {
+    public List<FacturaResponseDTO> getFacturaPendientes() {
         return repository.findAll().stream().map(mapper::toDTO).toList();
     }
 }

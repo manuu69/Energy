@@ -106,7 +106,7 @@ public class GlobalExceptionHandler {
             BusinessRuleException ex,
             HttpServletRequest request
     ) {
-        ErrorCode ec = ErrorCode.BUSINESS_RULE_VIOLATION;
+        ErrorCode ec = ex.getErrorCode();
 
         log.warn(
                 "Regla de negocio incumplida. path={}, errorCode={}, message={}",

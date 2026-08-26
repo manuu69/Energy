@@ -3,7 +3,8 @@ package org.example.energy.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.example.energy.dto.factura.FacturaPendienteResponseDTO;
-import org.example.energy.service.serviceImpl.FacturaPendienteViewServiceImpl;
+import org.example.energy.dto.factura.FacturaResponseDTO;
+import org.example.energy.service.FacturaPendienteViewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,10 +18,10 @@ import java.util.List;
 @Tag(name = "Facturas pendientes")
 public class FacturaPendienteViewController {
 
-    private final FacturaPendienteViewServiceImpl facturaService;
+    private final FacturaPendienteViewService facturaService;
 
     @GetMapping
-    public ResponseEntity<List<FacturaPendienteResponseDTO>> getFacturasPendientes(){
+    public ResponseEntity<List<FacturaResponseDTO>> getFacturasPendientes(){
         return ResponseEntity.ok(facturaService.getFacturaPendientes());
     }
 

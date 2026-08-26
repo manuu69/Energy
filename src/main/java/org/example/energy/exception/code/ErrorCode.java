@@ -96,7 +96,14 @@ public enum ErrorCode {
             "ERR_108",
             "No existe tramo de tarifa para el consumo indicado",
             HttpStatus.UNPROCESSABLE_CONTENT
-    );
+    ),
+
+    FACTURA_YA_CANCELADA(
+            "ERR_109",
+            "La factura ya está cancelada",
+            HttpStatus.CONFLICT
+    )
+    ;
 
     private final String code;
     private final String defaultMessage;

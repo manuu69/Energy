@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -31,6 +32,11 @@ public class FacturaServiceImpl implements FacturaService {
     private final FacturaRepository facturaRepository;
     private final ContratoRepository contratoRepository;
     private final FacturaMapper mapper;
+
+    private static final Map<EstadoPago, ErrorCode> ESTADOS_NO_PAGABLES = Map.of(
+            EstadoPago.PAGADA,    ErrorCode.FACTURA_YA_PAGADA,
+            EstadoPago.CANCELADA, ErrorCode.FACTURA_YA_CANCELADA
+    );
 
     @Override
     @Transactional(readOnly = true)
@@ -106,7 +112,7 @@ public class FacturaServiceImpl implements FacturaService {
             );
 
             throw new BusinessRuleException(
-                    ErrorCode.CONTRATO_NO_ACTIVO.name()
+                    ErrorCode.CONTRATO_NO_ACTIVO
             );
         }
 
@@ -136,7 +142,7 @@ public class FacturaServiceImpl implements FacturaService {
             );
 
             throw new BusinessRuleException(
-                    ErrorCode.BUSINESS_RULE_VIOLATION.name()
+                    ErrorCode.BUSINESS_RULE_VIOLATION
             );
         }
 
@@ -171,7 +177,7 @@ public class FacturaServiceImpl implements FacturaService {
             log.warn("Pago rechazado. La factura id={} ya está pagada", id);
 
             throw new BusinessRuleException(
-                    ErrorCode.FACTURA_YA_PAGADA.name()
+                    ErrorCode.FACTURA_YA_PAGADA
             );
         }
 
@@ -179,7 +185,7 @@ public class FacturaServiceImpl implements FacturaService {
             log.warn("Pago rechazado. La factura id={} está cancelada", id);
 
             throw new BusinessRuleException(
-                    ErrorCode.BUSINESS_RULE_VIOLATION.name()
+                    ErrorCode.FACTURA_YA_CANCELADA
             );
         }
 
@@ -194,7 +200,6 @@ public class FacturaServiceImpl implements FacturaService {
     @Transactional
     public FacturaResponseDTO cancelarFactura(Integer id) {
         log.info("Iniciando cancelación de factura id={}", id);
-
         Factura factura = findById(id);
 
         log.debug(
@@ -203,22 +208,7 @@ public class FacturaServiceImpl implements FacturaService {
                 factura.getEstadoPago()
         );
 
-        if (factura.getEstadoPago() == EstadoPago.PAGADA) {
-            log.warn("Cancelación rechazada. La factura id={} ya está pagada", id);
-
-            throw new BusinessRuleException(
-                    ErrorCode.FACTURA_YA_PAGADA.name()
-            );
-        }
-
-        if (factura.getEstadoPago() == EstadoPago.CANCELADA) {
-            log.warn("Cancelación rechazada. La factura id={} ya está cancelada", id);
-
-            throw new BusinessRuleException(
-                    ErrorCode.BUSINESS_RULE_VIOLATION.name()
-            );
-        }
-
+        validarFacturaPagable(factura);
         factura.setEstadoPago(EstadoPago.CANCELADA);
 
         log.info("Factura id={} marcada como CANCELADA correctamente", id);
@@ -243,7 +233,7 @@ public class FacturaServiceImpl implements FacturaService {
             log.warn("Eliminación rechazada. La factura id={} ya está pagada", id);
 
             throw new BusinessRuleException(
-                    ErrorCode.FACTURA_YA_PAGADA.name()
+                    ErrorCode.FACTURA_YA_PAGADA
             );
         }
 
@@ -261,7 +251,7 @@ public class FacturaServiceImpl implements FacturaService {
             log.warn("Generación de facturas rechazada. Mes inválido={}", mes);
 
             throw new BusinessRuleException(
-                    ErrorCode.INVALID_INPUT.name()
+                    ErrorCode.INVALID_INPUT
             );
         }
 
@@ -280,5 +270,14 @@ public class FacturaServiceImpl implements FacturaService {
                             "Factura no encontrada con el ID: " + id
                     );
                 });
+    }
+
+    private void validarFacturaPagable(Factura factura) {
+        ErrorCode error = ESTADOS_NO_PAGABLES.get(factura.getEstadoPago());
+        if (error != null) {
+            log.warn("Pago rechazado. facturaId={}, estado={}",
+                    factura.getFacturaId(), factura.getEstadoPago());
+            throw new BusinessRuleException(error);
+        }
     }
 }

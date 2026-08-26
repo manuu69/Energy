@@ -150,7 +150,7 @@ public class ClienteServiceImpl implements ClienteService {
                     dto.email()
             );
             throw new BusinessRuleException(
-                    ErrorCode.DATABASE_CONFLICT.name()
+                    ErrorCode.DATABASE_CONFLICT
             );
         }
         Cliente cliente = clienteMapper.toEntity(dto);
@@ -183,7 +183,7 @@ public class ClienteServiceImpl implements ClienteService {
                                             foundCliente.getClienteId()
                                     );
 
-                                    throw new BusinessRuleException(ErrorCode.DATABASE_CONFLICT.name());
+                                    throw new BusinessRuleException(ErrorCode.DATABASE_CONFLICT);
                                 });
 
         clienteMapper.updateEntityFromDTO(dto, cliente);
