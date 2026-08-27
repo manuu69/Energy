@@ -102,7 +102,8 @@ public enum ErrorCode {
             "ERR_109",
             "La factura ya está cancelada",
             HttpStatus.CONFLICT
-    )
+    ),
+
     ;
 
     private final String code;

@@ -1,10 +1,16 @@
 package org.example.energy.repository.domain;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import org.example.energy.entity.domain.Contrato;
+import org.example.energy.enums.EstadoContrato;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 
 public interface ContratoRepository extends JpaRepository<Contrato, Integer> {
+    boolean existsById(Integer id);
+
+    @Query(value = "select count(*) from contratos c where c.cliente_id = :clienteId",
+            nativeQuery = true)
+    long countByClienteId(@Param("clienteId") Integer clienteId);
 }

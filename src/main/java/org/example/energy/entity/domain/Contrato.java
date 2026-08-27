@@ -39,7 +39,6 @@ public class Contrato {
     @Column(name = "estado", nullable = false)
     private EstadoContrato estado;
 
-    // Relación con Zona
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zona_id")
     private Zona zona;
