@@ -50,7 +50,7 @@ public class ContratoServiceImpl implements ContratoService {
     public ContratoResponseDTO create(ContratoCreateDTO dto) {
         Cliente cliente = clienteRepository.findById(dto.clienteId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Cliente ya existe con el id: " + dto.clienteId()
+                        "Cliente no existe con el id: " + dto.clienteId()
                         )
                 );
 
@@ -72,23 +72,71 @@ public class ContratoServiceImpl implements ContratoService {
     }
 
     @Override
+    @Transactional
     public ContratoResponseDTO update(Integer id, ContratoUpdateDTO dto) {
-        return null;
+        Contrato contrato = findById(id);
+
+        //PERMITIR CAMBIO DE ZONA, HAZLO MANUEL DEL FUTURO
+
+        contratoMapper.updateEntityFromDTO(dto, contrato);
+        return contratoMapper.toDTO(contrato);
     }
 
     @Override
-    public ContratoResponseDTO cancelar(Integer id) {
-        return null;
+    @Transactional
+    public ContratoResponseDTO darBaja(Integer id) {
+        Contrato contrato = findById(id);
+
+        if (contrato.getEstado().equals(EstadoContrato.BAJA)){
+            throw new BusinessRuleException(ErrorCode.CONTRATO_YA_DADO_DE_BAJA);
+        }
+        contrato.setEstado(EstadoContrato.BAJA);
+        return contratoMapper.toDTO(contrato);
     }
 
     @Override
+    @Transactional
+    public ContratoResponseDTO suspender(Integer id) {
+        Contrato contrato = findById(id);
+
+        switch (contrato.getEstado()){
+            case BAJA -> throw new BusinessRuleException(
+                    ErrorCode.CONTRATO_YA_DADO_DE_BAJA);
+            case SUSPENDIDO -> throw new BusinessRuleException(
+                    ErrorCode.CONTRATO_YA_SUSPENDIDO);
+            case ACTIVO -> contrato.setEstado(EstadoContrato.SUSPENDIDO);
+            default -> throw new BusinessRuleException(
+                    ErrorCode.ESTADO_CONTRATO_NO_VALIDO);
+        }
+
+        return contratoMapper.toDTO(contrato);
+    }
+
+    @Override
+    @Transactional
     public ContratoResponseDTO activar(Integer id) {
-        return null;
+        Contrato contrato = findById(id);
+
+        switch (contrato.getEstado()){
+            case BAJA -> throw new BusinessRuleException(
+                    ErrorCode.CONTRATO_YA_DADO_DE_BAJA);
+            case SUSPENDIDO -> contrato.setEstado(EstadoContrato.ACTIVO);
+            case ACTIVO -> throw new BusinessRuleException(
+                    ErrorCode.CONTRATO_YA_ACTIVO);
+            default -> throw new BusinessRuleException(
+                    ErrorCode.ESTADO_CONTRATO_NO_VALIDO);
+        }
+
+        return contratoMapper.toDTO(contrato);
     }
 
     @Override
+    @Transactional
     public void deleteById(Integer id) {
-
+        if (!contratoRepository.existsById(id)){
+            throw new ResourceNotFoundException("Contato no encontrado con el id: " + id);
+        }
+        contratoRepository.deleteById(id);
     }
 
     private Contrato findById(Integer id){

@@ -56,6 +56,7 @@ public enum ErrorCode {
             HttpStatus.CONFLICT
     ),
 
+
     CLIENTE_CON_DEUDA_PENDIENTE(
             "ERR_102",
             "El cliente tiene deuda PENDIENTE, no se puede dar de baja",
@@ -66,6 +67,30 @@ public enum ErrorCode {
             "ERR_103",
             "El contrato no está activo",
             HttpStatus.UNPROCESSABLE_CONTENT
+    ),
+
+    CONTRATO_YA_DADO_DE_BAJA(
+            "ERR_110",
+            "El contrato ya está dado de baja",
+            HttpStatus.CONFLICT
+    ),
+
+    CONTRATO_YA_SUSPENDIDO(
+            "ERR_111",
+            "El contrato ya está suspendido",
+            HttpStatus.CONFLICT
+    ),
+
+    CONTRATO_YA_ACTIVO(
+            "ERR_112",
+            "El contrato ya está activo",
+            HttpStatus.CONFLICT
+    ),
+
+    ESTADO_CONTRATO_NO_VALIDO(
+            "ERR_113",
+            "El estado del contrato no es valido",
+            HttpStatus.CONFLICT
     ),
 
     LIMITE_CONTRATOS_ALCANZADO(

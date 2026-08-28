@@ -11,7 +11,8 @@ public interface ContratoService {
     ContratoResponseDTO getById(Integer id);
     ContratoResponseDTO create(ContratoCreateDTO dto);
     ContratoResponseDTO update(Integer id, ContratoUpdateDTO dto);
-    ContratoResponseDTO cancelar(Integer id);
+    ContratoResponseDTO darBaja(Integer id);
+    ContratoResponseDTO suspender(Integer id);
     ContratoResponseDTO activar(Integer id);
     void deleteById(Integer id);
 }

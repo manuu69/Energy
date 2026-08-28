@@ -26,6 +26,7 @@ public class Contrato {
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tarifa", length = 10, nullable = false)
     private TipoTarifa tarifa;
 
