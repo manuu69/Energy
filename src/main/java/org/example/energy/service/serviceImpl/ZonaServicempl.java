@@ -27,8 +27,11 @@ public class ZonaServicempl implements ZonaService {
     }
 
     @Override
-    public List<ZonaResponseDTO> findSubzonas() {
-        return List.of();
+    public List<ZonaResponseDTO> findSubzonas(Integer id) {
+        if (!zonaRepository.existsById(id)){
+            throw new ResourceNotFoundException("La zona no existe con el id: " + id);
+        }
+        return zonaRepository.findById(id).stream().map(zonaMapper::toResponseDTO).toList();
     }
 
     @Override

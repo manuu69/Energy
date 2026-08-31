@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ZonaService {
     List<ZonaResponseDTO> findAll();
-    List<ZonaResponseDTO> findSubzonas();
+    List<ZonaResponseDTO> findSubzonas(Integer id);
     List<ZonaResponseDTO> getZonaCompleta();
     List<ZonaResponseDTO> getClientes();
     ZonaResponseDTO findById(Integer id);

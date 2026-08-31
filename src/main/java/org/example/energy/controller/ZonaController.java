@@ -28,4 +28,9 @@ public class ZonaController {
     public ResponseEntity<ZonaResponseDTO> getById(@PathVariable Integer id){
         return ResponseEntity.ok(zonaService.findById(id));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<List<ZonaResponseDTO>> getByPadreId(@PathVariable Integer id){
+        return ResponseEntity.ok(zonaService.findSubzonas(id));
+    }
 }

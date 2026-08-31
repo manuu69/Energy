@@ -9,7 +9,7 @@ import org.example.energy.dto.cliente.ClienteResponseDTO;
 import org.example.energy.dto.cliente.ClienteUpdateDTO;
 import org.example.energy.enums.Segmento;
 import org.example.energy.enums.TipoCliente;
-import org.example.energy.service.serviceImpl.ClienteServiceImpl;
+import org.example.energy.service.ClienteService;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/clientes")
 public class ClienteController {
 
-    private final ClienteServiceImpl clienteService;
+    private final ClienteService clienteService;
 
     @GetMapping
     public ResponseEntity<Page<ClienteResponseDTO>> getAll(
