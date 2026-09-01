@@ -2,6 +2,7 @@ package org.example.energy.entity.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.energy.enums.TipoLectura;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,6 +32,7 @@ public class Lectura {
     @Column(name = "consumo_kwh", nullable = false, precision = 10, scale = 2)
     private BigDecimal consumoKwh;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo_lectura", length = 20)
-    private String tipoLectura;  // real, estimada, autoconsumo
+    private TipoLectura tipoLectura;
 }

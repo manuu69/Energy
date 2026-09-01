@@ -1,6 +1,7 @@
 package org.example.energy.dto.lectura;
 
 import jakarta.validation.constraints.*;
+import org.example.energy.enums.TipoLectura;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,13 +14,13 @@ public record LecturaCreateDTO (
 
         @NotNull(message = "La fecha de lectura es obligatoria")
         @PastOrPresent(message = "La fecha de lectura no puede ser en el futuro")
-        LocalDate fechaLectura,
+        LocalDate fecha,
 
         @NotNull(message = "El consumo en kWh es obligatorio")
         @Positive(message = "El consumo en kWh debe ser un valor mayor que 0")
         BigDecimal consumoKwh,
 
         @NotNull(message = "El tipo de lectura es obligatorio")
-        String tipoLectura
+        TipoLectura tipoLectura
 ){
 }

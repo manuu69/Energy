@@ -1,15 +1,13 @@
 package org.example.energy.dto.lectura;
 
-import org.example.energy.enums.TipoLectura;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record LecturaResponseDTO(
+public record LecturaAnalisisDTO (
         Integer lecturaId,
         Integer contratoId,
         LocalDate fecha,
         BigDecimal consumoKwh,
-        TipoLectura tipoLectura
+        BigDecimal diferenciaConMedia
 ) {
 }

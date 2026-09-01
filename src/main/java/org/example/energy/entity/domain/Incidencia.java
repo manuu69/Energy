@@ -2,6 +2,8 @@ package org.example.energy.entity.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.energy.enums.EstadoIncidencia;
+import org.example.energy.enums.TipoIncidencia;
 
 import java.time.LocalDate;
 
@@ -19,13 +21,13 @@ public class Incidencia {
     @Column(name = "incidencia_id")
     private Integer incidenciaId;
 
-    // Relación con Contrato
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contrato_id", nullable = false)
     private Contrato contrato;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo", length = 50)
-    private String tipo;  // corte_suministro, fallo_medidor, fraude, averia, reclamacion
+    private TipoIncidencia tipo;
 
     @Column(name = "fecha_apertura", nullable = false)
     private LocalDate fechaApertura;
@@ -33,6 +35,7 @@ public class Incidencia {
     @Column(name = "fecha_cierre")
     private LocalDate fechaCierre;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado", length = 20)
-    private String estado;  // abierta, en_gestion, cerrada
+    private EstadoIncidencia estado;
 }
