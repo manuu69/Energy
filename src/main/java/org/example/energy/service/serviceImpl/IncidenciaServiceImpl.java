@@ -3,17 +3,28 @@ package org.example.energy.service.serviceImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.energy.dto.incidencia.IncidenciaCreateDTO;
+import org.example.energy.dto.incidencia.IncidenciaCriticaDTO;
 import org.example.energy.dto.incidencia.IncidenciaResponseDTO;
+import org.example.energy.dto.incidencia.IncidenciaUpdateDTO;
+import org.example.energy.entity.domain.Contrato;
 import org.example.energy.entity.domain.Incidencia;
 import org.example.energy.enums.EstadoIncidencia;
 import org.example.energy.enums.TipoIncidencia;
+import org.example.energy.exception.code.ErrorCode;
+import org.example.energy.exception.type.BusinessRuleException;
 import org.example.energy.exception.type.ResourceNotFoundException;
 import org.example.energy.mapper.IncidenciaMapper;
+import org.example.energy.repository.domain.ContratoRepository;
 import org.example.energy.repository.domain.IncidenciaRepository;
+import org.example.energy.repository.view.IncidenciaCriticaRepository;
 import org.example.energy.service.IncidenciaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @AllArgsConstructor
@@ -21,6 +32,8 @@ import org.springframework.stereotype.Service;
 public class IncidenciaServiceImpl implements IncidenciaService {
 
     private final IncidenciaRepository incidenciaRepository;
+    private final IncidenciaCriticaRepository incidenciaCriticaRepository;
+    private final ContratoRepository contratoRepository;
     private final IncidenciaMapper incidenciaMapper;
 
 
@@ -80,11 +93,25 @@ public class IncidenciaServiceImpl implements IncidenciaService {
 
     /**
      * @param dto
-     * @return
+     * @return dto
      */
     @Override
+    @Transactional
     public IncidenciaResponseDTO create(IncidenciaCreateDTO dto) {
-        return null;
+        Contrato contrato = contratoRepository.findById(dto.contratoId())
+                .orElseThrow(() ->
+                    new ResourceNotFoundException("Contrato no encontrado con el id: " + dto.contratoId())
+                );
+
+        Incidencia incidencia = incidenciaMapper.toEntity(dto);
+
+        incidencia.setContrato(contrato);
+        incidencia.setEstado(EstadoIncidencia.ABIERTA);
+        incidencia.setFechaApertura(LocalDate.now());
+        incidencia.setFechaCierre(null);
+
+        Incidencia saved = incidenciaRepository.save(incidencia);
+        return incidenciaMapper.toDTO(saved);
     }
 
     /**
@@ -93,8 +120,12 @@ public class IncidenciaServiceImpl implements IncidenciaService {
      * @return
      */
     @Override
-    public IncidenciaResponseDTO update(Integer id, IncidenciaCreateDTO dto) {
-        return null;
+    @Transactional
+    public IncidenciaResponseDTO update(Integer id, IncidenciaUpdateDTO dto) {
+        Incidencia incidencia = getIncidenciaById(id);
+
+        incidenciaMapper.updateEntityFromDTO(dto, incidencia);
+        return incidenciaMapper.toDTO(incidencia);
     }
 
     /**
@@ -102,8 +133,33 @@ public class IncidenciaServiceImpl implements IncidenciaService {
      * @return
      */
     @Override
+    @Transactional
     public IncidenciaResponseDTO iniciarGestion(Integer id) {
-        return null;
+        log.info("Iniciando gestión de la incidencia id={}", id);
+
+        Incidencia incidencia = getIncidenciaById(id);
+
+        if (incidencia.getEstado() == EstadoIncidencia.EN_GESTION) {
+            log.warn("La incidencia id={} ya se encuentra en gestión", id);
+
+            throw new BusinessRuleException(
+                    ErrorCode.INCIDENCIA_YA_EN_GESTION
+            );
+        }
+
+        if (incidencia.getEstado() == EstadoIncidencia.CERRADA) {
+            log.warn("No se puede iniciar la gestión de la incidencia id={} porque ya está cerrada", id);
+
+            throw new BusinessRuleException(
+                    ErrorCode.INCIDENCIA_YA_CERRADA
+            );
+        }
+
+        incidencia.setEstado(EstadoIncidencia.EN_GESTION);
+
+        log.info("Incidencia id={} puesta en gestión correctamente", id);
+
+        return incidenciaMapper.toDTO(incidencia);
     }
 
     /**
@@ -111,10 +167,58 @@ public class IncidenciaServiceImpl implements IncidenciaService {
      * @return
      */
     @Override
-    public IncidenciaResponseDTO cerrrar(Integer id) {
-        return null;
+    @Transactional
+    public IncidenciaResponseDTO cerrar(Integer id) {
+        log.info("Iniciando gestión de cerrar de la incidencia id={}", id);
+
+        Incidencia incidencia = getIncidenciaById(id);
+
+        if (incidencia.getEstado() == EstadoIncidencia.CERRADA) {
+            log.warn("No se puede cerrar la incidencia id={} porque ya está cerrada", id);
+
+            throw new BusinessRuleException(
+                    ErrorCode.INCIDENCIA_YA_CERRADA
+            );
+        }
+
+        incidencia.setEstado(EstadoIncidencia.CERRADA);
+        incidencia.setFechaCierre(LocalDate.now());
+
+        log.info("Incidencia id={} cerrada correctamente", id);
+
+        return incidenciaMapper.toDTO(incidencia);
     }
 
+    /**
+     * @return
+     */
+    @Override
+    public List<IncidenciaCriticaDTO> getIncidenciasCriticas() {
+        return incidenciaCriticaRepository
+                .findAll()
+                .stream().map(incidenciaMapper::toCriticaDTO)
+                .toList();
+    }
+
+    /**
+     * @param contratoId
+     * @return
+     */
+    @Override
+    public List<IncidenciaCriticaDTO> getIncidenciasCriticasByContrato(Integer contratoId) {
+        if (!contratoRepository.existsById(contratoId)){
+            throw new ResourceNotFoundException("Contrato no encontrado con el id: " + contratoId);
+        }
+
+        return incidenciaCriticaRepository.findByContratoId(contratoId)
+                .stream().map(incidenciaMapper::toCriticaDTO)
+                .toList();
+    }
+
+    /**
+     * @param id
+     * @return
+     */
     private Incidencia getIncidenciaById(Integer id){
         return incidenciaRepository.findById(id)
                 .orElseThrow(() -> {

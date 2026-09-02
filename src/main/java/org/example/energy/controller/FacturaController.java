@@ -83,4 +83,9 @@ public class FacturaController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/marcar-facturas-vencidas")
+    public ResponseEntity<Integer> marcarFactuasVencidas(){
+        return ResponseEntity.ok(facturaService.actualizarFacturasVencidas());
+    }
+
 }

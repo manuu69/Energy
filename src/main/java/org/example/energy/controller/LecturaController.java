@@ -48,7 +48,7 @@ public class LecturaController {
     }
 
     @GetMapping("/contrato/{id}")
-    public ResponseEntity<Page<LecturaResponseDTO>> getById(
+    public ResponseEntity<Page<LecturaResponseDTO>> getByContratoId(
             @PathVariable Integer id,
             @ParameterObject
             @PageableDefault(

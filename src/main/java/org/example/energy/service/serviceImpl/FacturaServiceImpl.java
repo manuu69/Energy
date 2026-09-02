@@ -242,6 +242,14 @@ public class FacturaServiceImpl implements FacturaService {
         log.info("Factura id={} eliminada correctamente", id);
     }
 
+    /**
+     * @return
+     */
+    @Override
+    public int actualizarFacturasVencidas() {
+        return facturaRepository.marcarFacturasVencidas(LocalDate.now(), EstadoPago.PENDIENTE, EstadoPago.VENCIDA);
+    }
+
     @Override
     @Transactional
     public void generarFacturas(Integer mes) {

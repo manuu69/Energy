@@ -16,4 +16,5 @@ public interface FacturaService {
     FacturaResponseDTO cancelarFactura(Integer id);
     void generarFacturas(Integer mes);
     void deleteById(Integer id);
+    int actualizarFacturasVencidas();
 }

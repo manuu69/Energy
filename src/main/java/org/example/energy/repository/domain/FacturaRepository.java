@@ -1,6 +1,7 @@
 package org.example.energy.repository.domain;
 
 import org.example.energy.entity.domain.Factura;
+import org.example.energy.enums.EstadoPago;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,5 +23,18 @@ public interface FacturaRepository extends JpaRepository<Factura, Integer> {
         Integer contratoId,
         LocalDate inicioMes,
         LocalDate finMes
+    );
+
+    @Modifying
+    @Query("""
+    UPDATE Factura f
+    SET f.estadoPago = :estadoVencida
+    WHERE f.estadoPago = :estadoPendiente
+      AND f.fechaVencimiento < :fechaActual
+    """)
+    int marcarFacturasVencidas(
+            @Param("fechaActual") LocalDate fechaActual,
+            @Param("estadoPendiente") EstadoPago estadoPendiente,
+            @Param("estadoVencida") EstadoPago estadoVencida
     );
 }

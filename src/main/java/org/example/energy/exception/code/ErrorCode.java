@@ -129,6 +129,24 @@ public enum ErrorCode {
             HttpStatus.CONFLICT
     ),
 
+    INCIDENCIA_YA_EN_GESTION(
+            "ERR_114",
+            "La incidencia ya esta en gestion",
+            HttpStatus.CONFLICT
+    ),
+
+    INCIDENCIA_YA_CERRADA(
+            "ERR_115",
+            "La incidencia ya esta cerrada y no se puedo volver a abrir",
+            HttpStatus.CONFLICT
+    ),
+
+    TRANSICION_ESTADO_INCIDENCIA_INVALIDA(
+            "ERR_116",
+            "El estado de transicion de inicidencia no es valido",
+            HttpStatus.UNPROCESSABLE_CONTENT
+    )
+
     ;
 
     private final String code;

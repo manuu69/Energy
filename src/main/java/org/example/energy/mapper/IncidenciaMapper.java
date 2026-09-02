@@ -1,9 +1,11 @@
 package org.example.energy.mapper;
 
 import org.example.energy.dto.incidencia.IncidenciaCreateDTO;
+import org.example.energy.dto.incidencia.IncidenciaCriticaDTO;
 import org.example.energy.dto.incidencia.IncidenciaResponseDTO;
 import org.example.energy.dto.incidencia.IncidenciaUpdateDTO;
 import org.example.energy.entity.domain.Incidencia;
+import org.example.energy.entity.view.IncidenciaCriticaView;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -23,6 +25,8 @@ public interface IncidenciaMapper {
     List<IncidenciaResponseDTO> toDTOList(
             List<Incidencia> incidencias
     );
+
+    IncidenciaCriticaDTO toCriticaDTO(IncidenciaCriticaView incidenciaCritica);
 
     @Mapping(target = "incidenciaId", ignore = true)
     @Mapping(target = "contrato", ignore = true)
