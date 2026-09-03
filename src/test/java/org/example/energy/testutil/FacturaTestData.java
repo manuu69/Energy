@@ -22,6 +22,7 @@ public final class FacturaTestData {
                 LocalDate.of(2024, 8, 5),
                 new BigDecimal("100.00"),
                 EstadoPago.PENDIENTE,
+                LocalDate.of(2024, 8, 25),
                 LocalDate.of(2024, 8, 25)
         );
     }
@@ -94,6 +95,7 @@ public final class FacturaTestData {
                 LocalDate.of(2024, 8, 5),
                 new BigDecimal("100.00"),
                 estadoPago,
+                LocalDate.of(2024, 8, 25),
                 LocalDate.of(2024, 8, 25)
         );
     }

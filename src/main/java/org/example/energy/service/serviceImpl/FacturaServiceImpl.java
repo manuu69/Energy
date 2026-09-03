@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -148,6 +149,8 @@ public class FacturaServiceImpl implements FacturaService {
 
         Factura factura = mapper.toEntity(dto);
         factura.setContrato(contrato);
+        factura.setEstadoPago(EstadoPago.PENDIENTE);
+        factura.setFechaPago(null);
 
         Factura saved = facturaRepository.save(factura);
 
@@ -190,6 +193,7 @@ public class FacturaServiceImpl implements FacturaService {
         }
 
         factura.setEstadoPago(EstadoPago.PAGADA);
+        factura.setFechaPago(LocalDate.now());
 
         log.info("Factura id={} marcada como PAGADA correctamente", id);
 

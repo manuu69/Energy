@@ -1,7 +1,7 @@
 package org.example.energy.service;
 
-import org.example.energy.dto.dashboard.DashboradResumenDTO;
+import org.example.energy.dto.dashboard.DashboardResumenDTO;
 
 public interface DashboardResumenService {
-    DashboradResumenDTO getResumen();
+    DashboardResumenDTO getResumen();
 }

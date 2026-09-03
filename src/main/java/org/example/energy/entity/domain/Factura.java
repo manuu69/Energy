@@ -6,6 +6,7 @@ import org.example.energy.enums.EstadoPago;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "facturas")
@@ -38,4 +39,7 @@ public class Factura {
 
     @Column(name = "fecha_vencimiento", nullable = false)
     private LocalDate fechaVencimiento;
+
+    @Column(name = "fecha_pago")
+    private LocalDate fechaPago;
 }

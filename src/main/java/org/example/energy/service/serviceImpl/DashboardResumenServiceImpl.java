@@ -2,11 +2,15 @@ package org.example.energy.service.serviceImpl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.energy.dto.dashboard.DashboradResumenDTO;
+import org.example.energy.dto.dashboard.DashboardResumenDTO;
+import org.example.energy.entity.view.DashboardResumenView;
+import org.example.energy.exception.type.ResourceNotFoundException;
 import org.example.energy.mapper.DashboardResumenViewMapper;
 import org.example.energy.repository.view.DashboardResumenViewRepository;
 import org.example.energy.service.DashboardResumenService;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -20,7 +24,10 @@ public class DashboardResumenServiceImpl implements DashboardResumenService {
      * @return
      */
     @Override
-    public DashboradResumenDTO getResumen() {
-        return null;
+    public DashboardResumenDTO getResumen() {
+        DashboardResumenView dashboard = dashboardRepository.getResumen()
+                .orElseThrow(() -> new ResourceNotFoundException("No se ha encontrado ningun resumen"));;
+        return dashboardMapper.toDTO(dashboard);
+
     }
 }

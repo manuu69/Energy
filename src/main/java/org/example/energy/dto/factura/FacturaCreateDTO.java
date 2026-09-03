@@ -5,6 +5,7 @@ import org.example.energy.enums.EstadoPago;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record FacturaCreateDTO(
 
@@ -20,10 +21,8 @@ public record FacturaCreateDTO(
         @Positive(message = "El importe debe ser superior a 0.00")
         BigDecimal importe,
 
-        @NotNull
-        EstadoPago estadoPago,
-
         @NotNull(message = "La fecha de vencimiento es obligatoria")
+        @FutureOrPresent(message = "La fecha de vencimiento debe ser hoy o una fecha posterior a hoy")
         LocalDate fechaVencimiento
 
 ) {
