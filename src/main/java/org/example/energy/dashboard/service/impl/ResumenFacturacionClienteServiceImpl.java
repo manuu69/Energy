@@ -11,33 +11,29 @@ import org.example.energy.dashboard.repository.ResumenFacturacionClienteReposito
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
 @AllArgsConstructor
 public class ResumenFacturacionClienteServiceImpl implements ResumenFacturacionClienteService {
 
-    private final ResumenFacturacionClienteRepository repository;
-    private final ResumenFacturacionClienteMapper mapper;
+    private final ResumenFacturacionClienteRepository resumenRepository;
 
     /**
      * @param pageable
      * @return
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<ResumenFacturacionClienteResponseDTO> getAll(Pageable pageable) {
-        Page<ResumenFacturacionClienteView> resumenes = repository.findAll(pageable);
-        return resumenes.map(mapper::toDTO);
+        return resumenRepository.findAll(pageable);
     }
 
-    /**
-     * @param clienteId
-     * @return
-     */
     @Override
+    @Transactional(readOnly = true)
     public ResumenFacturacionClienteResponseDTO getByClienteId(Integer clienteId) {
-        ResumenFacturacionClienteView resumen = repository.findById(clienteId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con el id: " + clienteId));
-        return mapper.toDTO(resumen);
+        return resumenRepository.findById(clienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró resumen para el cliente con ID: " + clienteId));
     }
 }
