@@ -1,7 +1,7 @@
 package org.example.energy.testutil;
 
-import org.example.energy.entity.domain.Contrato;
-import org.example.energy.enums.EstadoContrato;
+import org.example.energy.contrato.entity.Contrato;
+import org.example.energy.common.enums.EstadoContrato;
 
 import java.time.LocalDate;
 

@@ -1,8 +1,8 @@
 package org.example.energy.service;
 
-import org.example.energy.mapper.ClienteMapper;
-import org.example.energy.repository.domain.ClienteRepository;
-import org.example.energy.service.serviceImpl.ClienteServiceImpl;
+import org.example.energy.cliente.mapper.ClienteMapper;
+import org.example.energy.cliente.repository.ClienteRepository;
+import org.example.energy.cliente.service.ClienteServiceImpl;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

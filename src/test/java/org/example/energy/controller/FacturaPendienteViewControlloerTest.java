@@ -1,9 +1,9 @@
 package org.example.energy.controller;
 
-import org.example.energy.dto.factura.FacturaPendienteResponseDTO;
-import org.example.energy.dto.factura.FacturaResponseDTO;
-import org.example.energy.mapper.ErrorMapper;
-import org.example.energy.service.FacturaPendienteViewService;
+import org.example.energy.factura.controller.FacturaPendienteViewController;
+import org.example.energy.factura.dto.FacturaResponseDTO;
+import org.example.energy.common.error.mapper.ErrorMapper;
+import org.example.energy.factura.service.FacturaPendienteViewService;
 import org.example.energy.testutil.FacturaTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,13 +1,14 @@
 package org.example.energy.controller;
 
-import org.example.energy.dto.factura.FacturaCreateDTO;
-import org.example.energy.dto.factura.FacturaResponseDTO;
-import org.example.energy.exception.code.ErrorCode;
-import org.example.energy.exception.handler.GlobalExceptionHandler;
-import org.example.energy.exception.type.BusinessRuleException;
-import org.example.energy.exception.type.ResourceNotFoundException;
-import org.example.energy.mapper.ErrorMapper;
-import org.example.energy.service.FacturaService;
+import org.example.energy.factura.dto.FacturaCreateDTO;
+import org.example.energy.factura.dto.FacturaResponseDTO;
+import org.example.energy.common.exception.code.ErrorCode;
+import org.example.energy.common.exception.handler.GlobalExceptionHandler;
+import org.example.energy.common.exception.type.BusinessRuleException;
+import org.example.energy.common.exception.type.ResourceNotFoundException;
+import org.example.energy.factura.controller.FacturaController;
+import org.example.energy.common.error.mapper.ErrorMapper;
+import org.example.energy.factura.service.FacturaService;
 import org.example.energy.testutil.FacturaTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
