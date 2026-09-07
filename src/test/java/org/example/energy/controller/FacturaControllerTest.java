@@ -9,7 +9,7 @@ import org.example.energy.common.exception.type.ResourceNotFoundException;
 import org.example.energy.factura.controller.FacturaController;
 import org.example.energy.common.error.mapper.ErrorMapper;
 import org.example.energy.factura.service.FacturaService;
-import org.example.energy.testutil.FacturaTestData;
+import org.example.energy.testUtil.FacturaTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;

@@ -1,4 +1,4 @@
-package org.example.energy.testutil;
+package org.example.energy.testUtil;
 
 import org.example.energy.contrato.entity.Contrato;
 import org.example.energy.common.enums.EstadoContrato;

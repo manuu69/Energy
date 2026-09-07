@@ -21,7 +21,6 @@ public class HistoricoTarifa {
     @Column(name = "historico_id")
     private Integer historicoId;
 
-    // Relación con Contrato
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contrato_id", nullable = false)
     private Contrato contrato;
@@ -39,7 +38,7 @@ public class HistoricoTarifa {
     private LocalDate fechaInicio;
 
     @Column(name = "fecha_fin")
-    private LocalDate fechaFin;  // NULL = tarifa vigente
+    private LocalDate fechaFin;
 
     @Column(name = "motivo_cambio", length = 100)
     private String motivoCambio;

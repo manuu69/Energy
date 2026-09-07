@@ -1,4 +1,4 @@
-package org.example.energy.testutil;
+package org.example.energy.testUtil;
 
 import org.example.energy.factura.dto.FacturaCreateDTO;
 import org.example.energy.factura.dto.FacturaResponseDTO;

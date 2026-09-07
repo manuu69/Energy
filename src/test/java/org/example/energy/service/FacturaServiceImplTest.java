@@ -30,9 +30,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.example.energy.testutil.ContratoTestData.crearContratoActivo;
-import static org.example.energy.testutil.ContratoTestData.crearContratoConEstado;
-import static org.example.energy.testutil.FacturaTestData.*;
+import static org.example.energy.testUtil.ContratoTestData.crearContratoActivo;
+import static org.example.energy.testUtil.ContratoTestData.crearContratoConEstado;
+import static org.example.energy.testUtil.FacturaTestData.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
