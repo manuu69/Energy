@@ -265,4 +265,54 @@ public class ContratoServiceImplTest {
 
         verify(contratoRepository, never()).save(any());
     }
+
+    @Test
+    void activar_whenContratoSuspendido_cambiaEstado() {
+        Contrato contrato = ContratoTestData.crearContratoConEstado(EstadoContrato.SUSPENDIDO);
+
+        when(contratoRepository.findById(8)).thenReturn(Optional.of(contrato));
+        //when(contratoRepository.save(contrato)).thenReturn(contrato);
+        when(contratoMapper.toDTO(contrato)).thenReturn(
+                new ContratoResponseDTO(8, 1, 1, TipoTarifa.TARIFA_2_0_TD,
+                        BigDecimal.valueOf(4.6), LocalDate.of(2024, 1, 1),
+                        EstadoContrato.ACTIVO)
+        );
+
+        ContratoResponseDTO resultado = contratoService.activar(8);
+
+        assertThat(resultado.estado()).isEqualTo(EstadoContrato.ACTIVO);
+        verify(contratoRepository, never()).save(any());
+    }
+
+    @Test
+    void activar_whenContratoEnBaja_throwsBusinessRuleException() {
+        Contrato contrato = ContratoTestData.crearContratoConEstado(EstadoContrato.BAJA);
+
+        when(contratoRepository.findById(8)).thenReturn(Optional.of(contrato));
+
+        assertThatThrownBy(() -> contratoService.activar(8))
+                .isInstanceOf(BusinessRuleException.class);
+
+        verify(contratoRepository, never()).save(any());
+    }
+
+
+    @Test
+    void deleteById_whenContratoExists_deletesContrato() {
+        when(contratoRepository.existsById(8)).thenReturn(true);
+
+        contratoService.deleteById(8);
+
+        verify(contratoRepository).deleteById(8);
+    }
+
+    @Test
+    void deleteById_whenContratoNotExists_throwsResourceNotFoundException() {
+        when(contratoRepository.existsById(999)).thenReturn(false);
+
+        assertThatThrownBy(() -> contratoService.deleteById(999))
+                .isInstanceOf(ResourceNotFoundException.class);
+
+        verify(contratoRepository, never()).deleteById(any());
+    }
 }

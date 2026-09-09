@@ -2,6 +2,7 @@ package org.example.energy.cliente.dto;
 
 import jakarta.validation.constraints.*;
 import org.example.energy.common.enums.Segmento;
+import org.example.energy.common.enums.TipoCliente;
 
 public record ClienteUpdateDTO(
 
@@ -15,15 +16,10 @@ public record ClienteUpdateDTO(
         String email,
 
         @NotBlank(message = "El tipo de cliente es obligatorio")
-        @Pattern(
-                regexp = "^(?i)(residencial|empresa|industrial)$",
-                message = "El tipo debe ser 'residencial', 'empresa' o 'industrial'"
-        )
-        String tipo,
+        TipoCliente tipo,
 
         @Size(max = 50, message = "La ciudad no puede superar los 50 caracteres")
         String ciudad,
-
 
         Segmento segmento
 ) {
