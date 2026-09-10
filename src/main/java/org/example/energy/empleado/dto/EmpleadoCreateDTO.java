@@ -10,21 +10,23 @@ import org.example.energy.common.enums.RolEmpleado;
 import java.math.BigDecimal;
 
 public record EmpleadoCreateDTO (
-        @NotNull(message = "El nombre no debe de estar vacio")
+        @NotBlank(message = "El nombre no debe estar vacío")
         String nombre,
 
-        @Email
-        @NotNull(message = "El email no debe de estar vacio")
+        @Email(message = "Formato de email inválido")
+        @NotBlank(message = "El email no debe estar vacío")
         String email,
 
-        @NotBlank(message = "El departamento no debe de estar vacio")
+        @NotNull(message = "El departamento no debe estar vacío")
         Departamento departamento,
 
-        @NotBlank(message = "El rol no debe de estar vacio")
+        @NotNull(message = "El rol no debe estar vacío")
         RolEmpleado rol,
 
-        @Positive
-        @NotNull(message = "NO nulo")
-        BigDecimal salario
+        @Positive(message = "El salario debe ser mayor que cero")
+        @NotNull(message = "El salario no debe ser nulo")
+        BigDecimal salario,
+
+        Integer jefeId
 ) {
 }

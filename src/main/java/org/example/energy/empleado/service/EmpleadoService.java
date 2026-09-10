@@ -17,6 +17,6 @@ public interface EmpleadoService {
     List<EmpleadoResponseDTO> getByDepartamento(Departamento departamento);
     List<EmpleadoResponseDTO> getBySubordinados(Integer id);
     EmpleadoResponseDTO create(EmpleadoCreateDTO dto);
-    EmpleadoResponseDTO update(EmpleadoUpdateDTO dto);
+    EmpleadoResponseDTO update(Integer id, EmpleadoUpdateDTO dto);
     void delete(Integer id);
 }

@@ -147,6 +147,8 @@ public enum ErrorCode {
             HttpStatus.UNPROCESSABLE_CONTENT
     )
 
+    //EMPLEADO_YA_EXISTE
+
     ;
 
     private final String code;

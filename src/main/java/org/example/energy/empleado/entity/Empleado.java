@@ -2,6 +2,8 @@ package org.example.energy.empleado.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.energy.common.enums.Departamento;
+import org.example.energy.common.enums.RolEmpleado;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,11 +28,14 @@ public class Empleado {
     @Column(name = "email", unique = true, nullable = false, length = 150)
     private String email;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "departamento", nullable = false, length = 50)
-    private String departamento;
+    private Departamento departamento;
 
+    //@Enumerated(EnumType.STRING)
+    @Convert(converter = org.example.energy.common.converters.RolEmpleadoConverter.class)
     @Column(name = "rol", nullable = false, length = 50)
-    private String rol;
+    private RolEmpleado rol;
 
     @Column(name = "salario", nullable = false, precision = 10, scale = 2)
     private BigDecimal salario;
