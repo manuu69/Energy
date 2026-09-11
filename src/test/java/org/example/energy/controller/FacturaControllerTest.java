@@ -62,7 +62,6 @@ public class FacturaControllerTest {
 
     @Test
     void getById_WhenFacturaNotExists_returns404() throws Exception {
-        // Debes mantener el thenThrow para simular la excepción de negocio
         when(facturaService.getById(999))
                 .thenThrow(new ResourceNotFoundException("Factura no encontrada"));
 

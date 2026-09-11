@@ -85,4 +85,15 @@ public final class IncidenciaTestData {
                 12
         );
     }
+
+    public static IncidenciaResponseDTO crearIncidenciaConEstadoDTO(EstadoIncidencia estado) {
+        return new IncidenciaResponseDTO(
+                1,
+                10,
+                TipoIncidencia.AVERIA,
+                LocalDate.now().minusDays(5),
+                null,
+                estado
+        );
+    }
 }

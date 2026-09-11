@@ -98,7 +98,7 @@ public class ClienteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ClienteResponseDTO> update(@PathVariable Integer id, @RequestBody @Valid ClienteUpdateDTO dto){
-        return ResponseEntity.ok().body(clienteService.update(dto, id));
+        return ResponseEntity.ok().body(clienteService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")

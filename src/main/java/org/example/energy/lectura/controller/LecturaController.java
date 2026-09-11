@@ -1,4 +1,4 @@
-package org.example.energy.lectura.controiler;
+package org.example.energy.lectura.controller;
 
 
 import io.swagger.v3.oas.annotations.tags.Tag;

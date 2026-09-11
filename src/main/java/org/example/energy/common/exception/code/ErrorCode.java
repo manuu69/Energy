@@ -145,11 +145,15 @@ public enum ErrorCode {
             "ERR_116",
             "El estado de transicion de inicidencia no es valido",
             HttpStatus.UNPROCESSABLE_CONTENT
-    )
+    ),
 
     //EMPLEADO_YA_EXISTE
 
-    ;
+    LECTURA_INVALIDA(
+            "ERROR_117",
+            "La lectura tiene campos invalidos",
+            HttpStatus.BAD_REQUEST
+    );
 
     private final String code;
     private final String defaultMessage;

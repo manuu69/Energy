@@ -274,7 +274,7 @@ public class ClienteServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(
-                () -> clienteService.update(updateDTO, clienteId)
+                () -> clienteService.update(clienteId, updateDTO)
         )
                 .isInstanceOf(ResourceNotFoundException.class);
 

@@ -14,6 +14,7 @@ public record EmpleadoResponseDTO(
         RolEmpleado rol,
         BigDecimal salario,
         LocalDate fechaAlta,
+        boolean activo,
         Integer jefeId
 ) {
 }

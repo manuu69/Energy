@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,15 +62,15 @@ public class EmpleadoController {
 
     @PostMapping
     public ResponseEntity<EmpleadoResponseDTO> create(@Valid @RequestBody EmpleadoCreateDTO dto){
-        return ResponseEntity.ok().body(empleadoService.create(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(empleadoService.create(dto));  // devuelve 201
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<EmpleadoResponseDTO> update(@PathVariable Integer id, @Valid @RequestBody EmpleadoUpdateDTO dto){
         return ResponseEntity.ok().body(empleadoService.update(id, dto));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Integer id){
         empleadoService.delete(id);
         return ResponseEntity.noContent().build();

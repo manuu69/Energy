@@ -22,6 +22,8 @@ public record EmpleadoUpdateDTO(
 
         @Positive(message = "El salario debe ser mayor que cero")
         @NotNull(message = "El salario no debe ser nulo")
-        BigDecimal salario
+        BigDecimal salario,
+
+        Integer jefeId
 ) {
 }

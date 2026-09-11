@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.energy.common.enums.Departamento;
 import org.example.energy.common.enums.RolEmpleado;
-import org.example.energy.common.exception.code.ErrorCode;
-import org.example.energy.common.exception.type.BusinessRuleException;
 import org.example.energy.common.exception.type.ResourceNotFoundException;
 import org.example.energy.empleado.dto.EmpleadoCreateDTO;
 import org.example.energy.empleado.dto.EmpleadoResponseDTO;

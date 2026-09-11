@@ -170,7 +170,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     @Transactional
-    public ClienteResponseDTO update(ClienteUpdateDTO dto, Integer id) {
+    public ClienteResponseDTO update(Integer id, ClienteUpdateDTO dto) {
         Cliente cliente = findById(id);
 
         clienteRepository.findByEmail(dto.email())

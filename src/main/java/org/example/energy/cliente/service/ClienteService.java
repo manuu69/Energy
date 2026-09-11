@@ -16,6 +16,6 @@ public interface ClienteService {
     Page<ClienteResponseDTO> getBySegmento(Segmento segmento, Pageable pageable);
     Page<ClienteResponseDTO> getByTipo(TipoCliente tipo, Pageable pageable);
     ClienteResponseDTO create(ClienteCreateDTO dto);
-    ClienteResponseDTO update(ClienteUpdateDTO dto, Integer id);
+    ClienteResponseDTO update(Integer id, ClienteUpdateDTO dto);
     void darBaja(Integer id);
 }

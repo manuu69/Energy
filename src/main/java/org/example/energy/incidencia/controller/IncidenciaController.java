@@ -105,12 +105,12 @@ public class IncidenciaController {
         return ResponseEntity.ok().body(incidenciaService.update(id, dto));
     }
 
-    @PutMapping("/{id}/iniciarGestion")
+    @PatchMapping("/{id}/iniciarGestion")
     public ResponseEntity<IncidenciaResponseDTO> iniciarGestion(@PathVariable Integer id){
         return ResponseEntity.ok().body(incidenciaService.iniciarGestion(id));
     }
 
-    @PutMapping("/{id}/cerrar")
+    @PatchMapping("/{id}/cerrar")
     public ResponseEntity<IncidenciaResponseDTO> cerrar(@PathVariable Integer id){
         return ResponseEntity.ok().body(incidenciaService.cerrar(id));
     }
