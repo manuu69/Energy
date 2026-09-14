@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({GlobalExceptionHandler.class})
 public class IncidenciaControllerTest {
 
-    private final static String API_URL = "/api/v1/incidencias";
+    private final static String API_URL = "/incidencias";
 
     @Autowired
     private MockMvc mockMvc;

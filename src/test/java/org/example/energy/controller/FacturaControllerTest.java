@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({GlobalExceptionHandler.class})
 public class FacturaControllerTest {
 
-    private final static String API_URL = "/api/v1/facturas";
+    private final static String API_URL = "/facturas";
 
     @Autowired
     private MockMvc mockMvc;

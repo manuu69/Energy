@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(FacturaPendienteViewController.class)
 public class FacturaPendienteViewControlloerTest {
 
-    private final static String API_URL = "/api/v1/facturas/pendientes";
+    private final static String API_URL = "/facturas/pendientes";
 
     @Autowired
     private MockMvc mockMvc;

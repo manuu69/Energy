@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({GlobalExceptionHandler.class})
 public class ResumenFacturacionClienteControllerTest {
 
-    private final static String API_URL = "/api/v1/resumenes/facturacion-clientes";
+    private final static String API_URL = "/resumenes/facturacion-clientes";
 
     @Autowired
     private MockMvc mockMvc;

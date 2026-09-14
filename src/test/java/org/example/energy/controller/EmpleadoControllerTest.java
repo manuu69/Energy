@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({GlobalExceptionHandler.class, JacksonAutoConfiguration.class})
 public class EmpleadoControllerTest {
 
-    private final static String API_URL = "/api/v1/empleados";
+    private final static String API_URL = "/empleados";
 
     @Autowired
     private MockMvc mockMvc;

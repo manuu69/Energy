@@ -249,7 +249,7 @@ public class FacturaServiceImplTest {
 
         assertThatThrownBy(() -> facturaService.pagarFactura(id))
                 .isInstanceOf(BusinessRuleException.class)
-                .hasMessageContaining(ErrorCode.FACTURA_YA_PAGADA.name());
+                .hasMessageContaining(ErrorCode.FACTURA_YA_PAGADA.getDefaultMessage());
 
         assertThat(factura.getEstadoPago()).isEqualTo(EstadoPago.PAGADA);
 
@@ -268,7 +268,7 @@ public class FacturaServiceImplTest {
 
         assertThatThrownBy(() -> facturaService.pagarFactura(id))
                 .isInstanceOf(BusinessRuleException.class)
-                .hasMessageContaining(ErrorCode.BUSINESS_RULE_VIOLATION.name());
+                .hasMessageContaining(ErrorCode.FACTURA_YA_CANCELADA.getDefaultMessage());
 
         assertThat(factura.getEstadoPago()).isEqualTo(EstadoPago.CANCELADA);
 
@@ -339,7 +339,7 @@ public class FacturaServiceImplTest {
 
         assertThatThrownBy(() -> facturaService.cancelarFactura(id))
                 .isInstanceOf(BusinessRuleException.class)
-                .hasMessageContaining(ErrorCode.FACTURA_YA_PAGADA.name());
+                .hasMessageContaining(ErrorCode.FACTURA_YA_PAGADA.getDefaultMessage());
 
         assertThat(factura.getEstadoPago()).isEqualTo(EstadoPago.PAGADA);
 
@@ -358,7 +358,7 @@ public class FacturaServiceImplTest {
 
         assertThatThrownBy(() -> facturaService.cancelarFactura(id))
                 .isInstanceOf(BusinessRuleException.class)
-                .hasMessageContaining(ErrorCode.BUSINESS_RULE_VIOLATION.name());
+                .hasMessageContaining(ErrorCode.FACTURA_YA_CANCELADA.getDefaultMessage());
 
         assertThat(factura.getEstadoPago()).isEqualTo(EstadoPago.CANCELADA);
 
@@ -412,7 +412,7 @@ public class FacturaServiceImplTest {
         // Act & Assert
         assertThatThrownBy(() -> facturaService.deleteById(id))
                 .isInstanceOf(BusinessRuleException.class)
-                .hasMessageContaining(ErrorCode.FACTURA_YA_PAGADA.name());
+                .hasMessageContaining(ErrorCode.FACTURA_YA_PAGADA.getDefaultMessage());
 
         verify(facturaRepository).findById(id);
         verify(facturaRepository, never()).delete(any());
