@@ -97,7 +97,7 @@ public class EmpleadoControllerTest {
         when(empleadoService.getById(empleadoId))
                 .thenThrow(new ResourceNotFoundException("No existe el empleado con ID: " + empleadoId));
 
-        mockMvc.perform(get("/api/v1/empleados/{id}", empleadoId)
+        mockMvc.perform(get(API_URL + "/{id}", empleadoId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
@@ -111,7 +111,7 @@ public class EmpleadoControllerTest {
 
         when(empleadoService.create(any(EmpleadoCreateDTO.class))).thenReturn(responseDTO);
 
-        mockMvc.perform(post("/api/v1/empleados")
+        mockMvc.perform(post(API_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createDTO)))
                 .andExpect(status().isCreated())
@@ -127,7 +127,7 @@ public class EmpleadoControllerTest {
                 "", "email-invalido", null, null, new BigDecimal("-100.00"), null
         );
 
-        mockMvc.perform(post("/api/v1/empleados")
+        mockMvc.perform(post(API_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDTO)))
                 .andExpect(status().isBadRequest());
@@ -143,7 +143,7 @@ public class EmpleadoControllerTest {
 
         when(empleadoService.update(eq(empleadoId), any(EmpleadoUpdateDTO.class))).thenReturn(responseDTO);
 
-        mockMvc.perform(put("/api/v1/empleados/{id}", empleadoId)
+        mockMvc.perform(put(API_URL + "/{id}", empleadoId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isOk())
@@ -160,7 +160,7 @@ public class EmpleadoControllerTest {
         when(empleadoService.update(eq(empleadoId), any(EmpleadoUpdateDTO.class)))
                 .thenThrow(new ResourceNotFoundException("No existe el empleado con ID: " + empleadoId));
 
-        mockMvc.perform(put("/api/v1/empleados/{id}", empleadoId)
+        mockMvc.perform(put(API_URL + "/{id}", empleadoId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isNotFound());
@@ -174,7 +174,7 @@ public class EmpleadoControllerTest {
 
         doNothing().when(empleadoService).delete(empleadoId);
 
-        mockMvc.perform(delete("/api/v1/empleados/{id}", empleadoId))
+        mockMvc.perform(delete(API_URL + "/{id}", empleadoId))
                 .andExpect(status().isNoContent());
 
         verify(empleadoService).delete(empleadoId);
