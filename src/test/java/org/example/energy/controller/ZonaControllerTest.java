@@ -4,36 +4,29 @@ import org.example.energy.common.error.mapper.ErrorMapper;
 import org.example.energy.common.exception.handler.GlobalExceptionHandler;
 import org.example.energy.common.exception.type.ResourceNotFoundException;
 import org.example.energy.testUtil.ZonaTestData;
-import org.example.energy.zona.dto.ZonaCreateDTO;
+import org.example.energy.zona.controller.ZonaController;
 import org.example.energy.zona.dto.ZonaResponseDTO;
-import org.example.energy.zona.dto.ZonaUpdateDTO;
 import org.example.energy.zona.service.ZonaService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@WebMvcTest(ZonaController.class)
+@WebMvcTest(controllers = ZonaController.class, properties = "spring.mvc.api-prefix=/api/v1")
 @Import({GlobalExceptionHandler.class})
 public class ZonaControllerTest {
 
-    private final static String API_URL = "/api/v1/zonas";
+    private final static String API_URL = "/zonas";
 
     @Autowired
     private MockMvc mockMvc;
@@ -45,7 +38,7 @@ public class ZonaControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private ZonaService zonaService;
+    private  ZonaService zonaService;
 
     // GET BY ID
     @Test
@@ -74,15 +67,15 @@ public class ZonaControllerTest {
 
     // GET ALL
     @Test
-    void getAll_returns200WithPage() throws Exception {
+    void getAll_returns200WithList() throws Exception {
         List<ZonaResponseDTO> list = List.of(ZonaTestData.crearZonaResponseDTO());
 
         when(zonaService.findAll()).thenReturn(list);
 
         mockMvc.perform(get(API_URL))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content[0].zonaId").value(1));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.[0].zonaId").value(1));
 
         verify(zonaService).findAll();
     }

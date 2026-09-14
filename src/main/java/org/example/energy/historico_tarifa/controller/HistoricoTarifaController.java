@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/historico-tarifas")
+@RequestMapping("/historico-tarifas")
 @RequiredArgsConstructor
 @Tag(name = "Historico de cambios de tarifas")
 public class HistoricoTarifaController {
