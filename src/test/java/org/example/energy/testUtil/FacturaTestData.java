@@ -39,11 +39,14 @@ public final class FacturaTestData {
     }
 
     public static FacturaCreateDTO crearFacturaCreateDTO() {
+        LocalDate fechaEmision = LocalDate.now();
+        LocalDate fechaVencimiento = fechaEmision.plusDays(20);
+
         return new FacturaCreateDTO(
                 8,
-                LocalDate.of(2024, 8, 5),
+                fechaEmision,
                 new BigDecimal("100.00"),
-                LocalDate.of(2024, 8, 25)
+                fechaVencimiento
         );
     }
 
