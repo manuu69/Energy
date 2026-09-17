@@ -67,16 +67,16 @@ public class ClienteServiceImplTest {
     private ClienteServiceImpl clienteService;
 
     @Test
-    void getAll_ReturnsPage(){
+    void getAll_ReturnsPage() {
         ClienteFilter filter = new ClienteFilter(null, "Madrid", null, null);
-        Pageable pageable = PageRequest.of(0,10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         Cliente cliente = crearCliente();
         ClienteResponseDTO dto = crearClienteResponseDTO();
 
         Page<Cliente> page = new PageImpl<>(List.of(cliente));
 
-        when(clienteRepository.findAll(any(Specification.class), pageable)).thenReturn(page);
+        when(clienteRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
         when(clienteMapper.toDTO(cliente)).thenReturn(dto);
 
         Page<ClienteResponseDTO> result = clienteService.getAll(filter, pageable);
@@ -96,7 +96,7 @@ public class ClienteServiceImplTest {
         Pageable pageable = PageRequest.of(0,10);
         Page<Cliente> page = new PageImpl<>(List.of());
 
-        when(clienteRepository.findAll(any(Specification.class), pageable)).thenReturn(page);
+        when(clienteRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
 
         Page<ClienteResponseDTO> result = clienteService.getAll(filter, pageable);
 
