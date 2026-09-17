@@ -2,6 +2,7 @@ package org.example.energy.controller;
 
 import org.example.energy.cliente.controller.ClienteController;
 import org.example.energy.cliente.dto.ClienteCreateDTO;
+import org.example.energy.cliente.dto.ClienteFilter;
 import org.example.energy.cliente.dto.ClienteResponseDTO;
 import org.example.energy.cliente.dto.ClienteUpdateDTO;
 import org.example.energy.cliente.service.ClienteService;
@@ -90,26 +91,29 @@ public class ClienteControllerTest {
                 List.of(ClienteTestData.crearClienteResponseDTO())
         );
 
-        when(clienteService.getAll(any(Pageable.class))).thenReturn(page);
+        when(clienteService.getAll(any(ClienteFilter.class), any(Pageable.class))).thenReturn(page);
 
-        mockMvc.perform(get(API_URL))
+        mockMvc.perform(get(API_URL)
+                        .param("ciudad", "Murcia")
+                        .param("page", "0")
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content[0].clienteId").value(1));
 
-        verify(clienteService).getAll(any(Pageable.class));
+        verify(clienteService).getAll(any(ClienteFilter.class), any(Pageable.class));
     }
 
     @Test
     void getAll_whenEmpty_returns200WithEmptyPage() throws Exception {
-        when(clienteService.getAll(any(Pageable.class))).thenReturn(Page.empty());
+        when(clienteService.getAll(any(ClienteFilter.class), any(Pageable.class))).thenReturn(Page.empty());
 
         mockMvc.perform(get(API_URL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content").isEmpty());
 
-        verify(clienteService).getAll(any(Pageable.class));
+        verify(clienteService).getAll(any(ClienteFilter.class), any(Pageable.class));
     }
 
     // POST

@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.energy.cliente.dto.ClienteCreateDTO;
+import org.example.energy.cliente.dto.ClienteFilter;
 import org.example.energy.cliente.dto.ClienteResponseDTO;
 import org.example.energy.cliente.dto.ClienteUpdateDTO;
 import org.example.energy.common.enums.Segmento;
@@ -35,13 +36,14 @@ public class ClienteController {
     @Operation(summary = "Obtener todos los clientes", description = "Devuelve una lista paginada de todos los clientes registrados en el sistema.")
     @ApiResponse(responseCode = "200", description = "Página de clientes recuperada exitosamente")
     public ResponseEntity<Page<ClienteResponseDTO>> getAll(
+            @ParameterObject ClienteFilter filter,
             @ParameterObject
             @PageableDefault(
                     sort = "clienteId",
                     direction = Sort.Direction.ASC)
             Pageable pageable
     ){
-        return ResponseEntity.ok(clienteService.getAll(pageable));
+        return ResponseEntity.ok(clienteService.getAll(filter, pageable));
     }
 
     @GetMapping("/{id}")

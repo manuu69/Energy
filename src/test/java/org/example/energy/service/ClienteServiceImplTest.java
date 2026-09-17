@@ -1,6 +1,7 @@
 package org.example.energy.service;
 
 import org.example.energy.cliente.dto.ClienteCreateDTO;
+import org.example.energy.cliente.dto.ClienteFilter;
 import org.example.energy.cliente.dto.ClienteResponseDTO;
 import org.example.energy.cliente.dto.ClienteUpdateDTO;
 import org.example.energy.cliente.entity.Cliente;
@@ -29,6 +30,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
@@ -66,6 +68,7 @@ public class ClienteServiceImplTest {
 
     @Test
     void getAll_ReturnsPage(){
+        ClienteFilter filter = new ClienteFilter(null, "Madrid", null, null);
         Pageable pageable = PageRequest.of(0,10);
 
         Cliente cliente = crearCliente();
@@ -73,34 +76,35 @@ public class ClienteServiceImplTest {
 
         Page<Cliente> page = new PageImpl<>(List.of(cliente));
 
-        when(clienteRepository.findAll(pageable)).thenReturn(page);
+        when(clienteRepository.findAll(any(Specification.class), pageable)).thenReturn(page);
         when(clienteMapper.toDTO(cliente)).thenReturn(dto);
 
-        Page<ClienteResponseDTO> result = clienteService.getAll(pageable);
+        Page<ClienteResponseDTO> result = clienteService.getAll(filter, pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().getFirst().clienteId()).isEqualTo(dto.clienteId());
         assertThat(result.getTotalElements()).isEqualTo(1);
 
-        verify(clienteRepository).findAll(pageable);
+        verify(clienteRepository).findAll(any(Specification.class), eq(pageable));
         verify(clienteMapper).toDTO(cliente);
     }
 
     @Test
     void getAll_WhenNoClientes_ReturnsEmptyPage(){
+        ClienteFilter filter = new ClienteFilter(null, null, null, null);
         Pageable pageable = PageRequest.of(0,10);
         Page<Cliente> page = new PageImpl<>(List.of());
 
-        when(clienteRepository.findAll(pageable)).thenReturn(page);
+        when(clienteRepository.findAll(any(Specification.class), pageable)).thenReturn(page);
 
-        Page<ClienteResponseDTO> result = clienteService.getAll(pageable);
+        Page<ClienteResponseDTO> result = clienteService.getAll(filter, pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).isEmpty();
         assertThat(result.getTotalElements()).isZero();
 
-        verify(clienteRepository).findAll(pageable);
+        verify(clienteRepository).findAll(any(Specification.class), eq(pageable));
         verifyNoInteractions(clienteMapper);
     }
 

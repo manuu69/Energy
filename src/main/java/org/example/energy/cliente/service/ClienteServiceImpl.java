@@ -3,9 +3,11 @@ package org.example.energy.cliente.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.energy.cliente.dto.ClienteCreateDTO;
+import org.example.energy.cliente.dto.ClienteFilter;
 import org.example.energy.cliente.dto.ClienteResponseDTO;
 import org.example.energy.cliente.dto.ClienteUpdateDTO;
 import org.example.energy.cliente.entity.Cliente;
+import org.example.energy.cliente.spec.ClienteSpecifications;
 import org.example.energy.common.enums.Segmento;
 import org.example.energy.common.enums.TipoCliente;
 import org.example.energy.common.exception.type.BusinessRuleException;
@@ -15,6 +17,7 @@ import org.example.energy.cliente.mapper.ClienteMapper;
 import org.example.energy.cliente.repository.ClienteRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,23 +26,25 @@ import java.time.LocalDate;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class ClienteServiceImpl implements ClienteService {
-
+public class ClienteServiceImpl implements ClienteService
+{
 
     private final ClienteRepository clienteRepository;
     private final ClienteMapper clienteMapper;
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ClienteResponseDTO> getAll(Pageable pageable) {
+    public Page<ClienteResponseDTO> getAll(ClienteFilter filter, Pageable pageable) {
         log.debug(
-                "Consultando clientes paginados. page={}, size={}, sort={}",
+                "Consultando clientes filtrados y paginados. filter={}, page={}, size={}, sort={}",
+                filter,
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
                 pageable.getSort()
         );
 
-        Page<Cliente> clientes = clienteRepository.findAll(pageable);
+        Specification<Cliente> spec = ClienteSpecifications.conFiltros(filter);
+        Page<Cliente> clientes = clienteRepository.findAll(spec, pageable);
 
         log.info(
                 "Consulta de clientes realizada. totalElements={}, totalPages={}, currentPage={}",
@@ -47,8 +52,8 @@ public class ClienteServiceImpl implements ClienteService {
                 clientes.getTotalPages(),
                 clientes.getNumber()
         );
-        return clientes.map(clienteMapper::toDTO);
 
+        return clientes.map(clienteMapper::toDTO);
     }
 
     @Override

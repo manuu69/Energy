@@ -1,6 +1,7 @@
 package org.example.energy.cliente.service;
 
 import org.example.energy.cliente.dto.ClienteCreateDTO;
+import org.example.energy.cliente.dto.ClienteFilter;
 import org.example.energy.cliente.dto.ClienteResponseDTO;
 import org.example.energy.cliente.dto.ClienteUpdateDTO;
 import org.example.energy.common.enums.Segmento;
@@ -9,7 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ClienteService {
-    Page<ClienteResponseDTO> getAll(Pageable pageable);
+    Page<ClienteResponseDTO> getAll(ClienteFilter filter, Pageable pageable);
     ClienteResponseDTO getById(Integer id);
     ClienteResponseDTO getByEmail(String email);
     Page<ClienteResponseDTO> getByCiudad(String ciudad, Pageable pageable);
