@@ -2,7 +2,9 @@ package org.example.energy.contrato.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.energy.cliente.spec.ClienteSpecifications;
 import org.example.energy.contrato.dto.ContratoCreateDTO;
+import org.example.energy.contrato.dto.ContratoFilter;
 import org.example.energy.contrato.dto.ContratoResponseDTO;
 import org.example.energy.contrato.dto.ContratoUpdateDTO;
 import org.example.energy.cliente.entity.Cliente;
@@ -14,8 +16,10 @@ import org.example.energy.common.exception.type.ResourceNotFoundException;
 import org.example.energy.contrato.mapper.ContratoMapper;
 import org.example.energy.cliente.repository.ClienteRepository;
 import org.example.energy.contrato.repository.ContratoRepository;
+import org.example.energy.contrato.spec.ContratoSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +36,10 @@ public class ContratoServiceImpl implements ContratoService {
 
 
     @Override
-    public Page<ContratoResponseDTO> getAll(Pageable pageable) {
-        Page<Contrato> contratos = contratoRepository.findAll(pageable);
+    public Page<ContratoResponseDTO> getAll(ContratoFilter filter, Pageable pageable) {
+        Specification<Contrato> spec = ContratoSpecifications.conFiltros(filter);
+
+        Page<Contrato> contratos = contratoRepository.findAll(spec, pageable);
 
         return contratos.map(contratoMapper::toDTO);
     }

@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.energy.contrato.dto.ContratoCreateDTO;
+import org.example.energy.contrato.dto.ContratoFilter;
 import org.example.energy.contrato.dto.ContratoResponseDTO;
 import org.example.energy.contrato.dto.ContratoUpdateDTO;
 import org.example.energy.contrato.service.ContratoService;
@@ -33,13 +34,14 @@ public class ContratoController {
     @Operation(summary = "Obtener todos los contratos", description = "Devuelve una lista paginada de todos los contratos de suministro registrados en el sistema.")
     @ApiResponse(responseCode = "200", description = "Página de contratos recuperada exitosamente")
     public ResponseEntity<Page<ContratoResponseDTO>> getAll(
+            @ParameterObject ContratoFilter filter,
             @ParameterObject
             @PageableDefault(
                     sort = "contratoId",
                     direction = Sort.Direction.ASC)
             Pageable pageable
     ){
-        return ResponseEntity.ok(contratoService.getAll(pageable));
+        return ResponseEntity.ok(contratoService.getAll(filter, pageable));
     }
 
     @GetMapping("/{id}")

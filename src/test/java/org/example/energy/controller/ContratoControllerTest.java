@@ -7,6 +7,7 @@ import org.example.energy.common.exception.type.BusinessRuleException;
 import org.example.energy.common.exception.type.ResourceNotFoundException;
 import org.example.energy.contrato.controller.ContratoController;
 import org.example.energy.contrato.dto.ContratoCreateDTO;
+import org.example.energy.contrato.dto.ContratoFilter;
 import org.example.energy.contrato.dto.ContratoResponseDTO;
 import org.example.energy.contrato.dto.ContratoUpdateDTO;
 import org.example.energy.contrato.service.ContratoService;
@@ -90,26 +91,26 @@ public class ContratoControllerTest {
                 List.of(ContratoTestData.crearContratoResponseDTO())
         );
 
-        when(contratoService.getAll(any(Pageable.class))).thenReturn(page);
+        when(contratoService.getAll(any(ContratoFilter.class), any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get(API_URL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content[0].contratoId").value(8));
 
-        verify(contratoService).getAll(any(Pageable.class));
+        verify(contratoService).getAll(any(ContratoFilter.class), any(Pageable.class));
     }
 
     @Test
     void getAll_whenEmpty_returns200WithEmptyPage() throws Exception {
-        when(contratoService.getAll(any(Pageable.class))).thenReturn(Page.empty());
+        when(contratoService.getAll(any(ContratoFilter.class), any(Pageable.class))).thenReturn(Page.empty());
 
         mockMvc.perform(get(API_URL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content").isEmpty());
 
-        verify(contratoService).getAll(any(Pageable.class));
+        verify(contratoService).getAll(any(ContratoFilter.class), any(Pageable.class));
     }
 
     // POST

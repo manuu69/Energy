@@ -1,6 +1,7 @@
 package org.example.energy.controller;
 
 import org.example.energy.factura.dto.FacturaCreateDTO;
+import org.example.energy.factura.dto.FacturaFilter;
 import org.example.energy.factura.dto.FacturaResponseDTO;
 import org.example.energy.common.exception.code.ErrorCode;
 import org.example.energy.common.exception.handler.GlobalExceptionHandler;
@@ -86,26 +87,26 @@ public class FacturaControllerTest {
                 List.of(FacturaTestData.crearFacturaResponseDTO())
         );
 
-        when(facturaService.getAll(any(Pageable.class))).thenReturn(page);
+        when(facturaService.getAll(any(FacturaFilter.class), any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get(API_URL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath(".content[0].facturaId").value(1));
 
-        verify(facturaService).getAll(any(Pageable.class));
+        verify(facturaService).getAll(any(FacturaFilter.class), any(Pageable.class));
     }
 
     @Test
     void getAll_whenEmpty_returns200WithEmptyPage() throws Exception {
-        when(facturaService.getAll(any(Pageable.class))).thenReturn(Page.empty());
+        when(facturaService.getAll(any(FacturaFilter.class), any(Pageable.class))).thenReturn(Page.empty());
 
         mockMvc.perform(get(API_URL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content").isEmpty());
 
-        verify(facturaService).getAll(any(Pageable.class));
+        verify(facturaService).getAll(any(FacturaFilter.class), any(Pageable.class));
     }
 
     @Test

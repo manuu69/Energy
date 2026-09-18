@@ -2,7 +2,9 @@ package org.example.energy.factura.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.energy.contrato.spec.ContratoSpecifications;
 import org.example.energy.factura.dto.FacturaCreateDTO;
+import org.example.energy.factura.dto.FacturaFilter;
 import org.example.energy.factura.dto.FacturaResponseDTO;
 import org.example.energy.contrato.entity.Contrato;
 import org.example.energy.factura.entity.Factura;
@@ -15,14 +17,22 @@ import org.example.energy.factura.mapper.FacturaMapper;
 import org.example.energy.contrato.repository.ContratoRepository;
 import org.example.energy.factura.service.FacturaService;
 import org.example.energy.factura.repository.FacturaRepository;
+import org.example.energy.factura.spec.FacturaSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -32,6 +42,7 @@ public class FacturaServiceImpl implements FacturaService {
     private final FacturaRepository facturaRepository;
     private final ContratoRepository contratoRepository;
     private final FacturaMapper mapper;
+    private final TransactionTemplate transactionTemplate;
 
     private static final Map<EstadoPago, ErrorCode> ESTADOS_NO_PAGABLES = Map.of(
             EstadoPago.PAGADA,    ErrorCode.FACTURA_YA_PAGADA,
@@ -39,16 +50,62 @@ public class FacturaServiceImpl implements FacturaService {
     );
 
     @Override
+    public StreamingResponseBody exportToCsv(FacturaFilter filter) {
+        Specification<Factura> spec = FacturaSpecifications.conFiltros(filter);
+
+        return outputStream -> {
+            // Marcamos la transacción como de solo lectura
+            transactionTemplate.setReadOnly(true);
+
+            // La transacción se mantendrá abierta DENTRO del callback mientras se consume el Stream
+            transactionTemplate.executeWithoutResult(status -> {
+                try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+                     Stream<Factura> facturaStream = facturaRepository.streamAll(spec)) {
+
+                    // 1. Cabecera
+                    writer.write("FacturaID;ContratoID;ClienteID;FechaEmision;Importe;EstadoPago;FechaVencimiento");
+                    writer.newLine();
+
+                    // 2. Transmisión de filas
+                    facturaStream.forEach(f -> {
+                        try {
+                            String line = String.format("%d;%d;%d;%s;%.2f;%s;%s",
+                                    f.getFacturaId(),
+                                    f.getContrato().getContratoId(),
+                                    f.getContrato().getCliente().getClienteId(),
+                                    f.getFechaEmision(),
+                                    f.getImporte(),
+                                    f.getEstadoPago(),
+                                    f.getFechaVencimiento()
+                            );
+                            writer.write(line);
+                            writer.newLine();
+                        } catch (Exception e) {
+                            log.error("Error escribiendo línea de factura ID={}", f.getFacturaId(), e);
+                        }
+                    });
+
+                    writer.flush();
+                } catch (Exception e) {
+                    log.error("Error al exportar CSV de facturas", e);
+                    throw new RuntimeException("Error al generar el archivo CSV", e);
+                }
+            });
+        };
+    }
+
+    @Override
     @Transactional(readOnly = true)
-    public Page<FacturaResponseDTO> getAll(Pageable pageable) {
+    public Page<FacturaResponseDTO> getAll(FacturaFilter filter, Pageable pageable) {
         log.debug(
                 "Consultando facturas paginadas. page={}, size={}, sort={}",
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
                 pageable.getSort()
         );
+        Specification<Factura> spec = FacturaSpecifications.conFiltros(filter);
 
-        Page<Factura> facturas = facturaRepository.findAll(pageable);
+        Page<Factura> facturas = facturaRepository.findAll(spec, pageable);
 
         log.info(
                 "Consulta de facturas realizada. totalElements={}, totalPages={}, currentPage={}",

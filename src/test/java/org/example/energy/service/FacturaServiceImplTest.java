@@ -1,6 +1,8 @@
 package org.example.energy.service;
 
+import org.example.energy.contrato.dto.ContratoFilter;
 import org.example.energy.factura.dto.FacturaCreateDTO;
+import org.example.energy.factura.dto.FacturaFilter;
 import org.example.energy.factura.dto.FacturaResponseDTO;
 import org.example.energy.contrato.entity.Contrato;
 import org.example.energy.factura.entity.Factura;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 
 import java.time.LocalDate;
@@ -53,6 +56,7 @@ public class FacturaServiceImplTest {
 
     @Test
     void getAll_whenFacturasExists_thenReturnPage(){
+        FacturaFilter filter = new FacturaFilter(null, null, null, null, null, null, null, null);
         Pageable pageable = PageRequest.of(0,10);
 
         Factura factura = crearFactura();
@@ -60,35 +64,36 @@ public class FacturaServiceImplTest {
 
         Page<Factura> facturaPage = new PageImpl<>(List.of(factura), pageable, 1);
 
-        when(facturaRepository.findAll(pageable)).thenReturn(facturaPage);
+        when(facturaRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(facturaPage);
         when(facturaMapper.toDTO(factura)).thenReturn(dto);
 
-        Page<FacturaResponseDTO> result = facturaService.getAll(pageable);
+        Page<FacturaResponseDTO> result = facturaService.getAll(filter, pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().getFirst().facturaId()).isEqualTo(dto.facturaId());
         assertThat(result.getTotalElements()).isEqualTo(1);
 
-        verify(facturaRepository).findAll(pageable);
+        verify(facturaRepository).findAll(any(Specification.class), eq(pageable));
         verify(facturaMapper).toDTO(factura);
 
     }
 
     @Test
     void getAll_whenFacturasNotExists_thenReturnPage(){
+        FacturaFilter filter = new FacturaFilter(null, null, null, null, null, null, null, null);
         Pageable pageable = PageRequest.of(0,10);
         Page<Factura> facturaPage = Page.empty();
 
-        when(facturaRepository.findAll(pageable)).thenReturn(facturaPage);
+        when(facturaRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(facturaPage);
 
-        Page<FacturaResponseDTO> result = facturaService.getAll(pageable);
+        Page<FacturaResponseDTO> result = facturaService.getAll(filter, pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).isEmpty();
         assertThat(result.getTotalElements()).isZero();
 
-        verify(facturaRepository).findAll(pageable);
+        verify(facturaRepository).findAll(any(Specification.class), eq(pageable));
         verifyNoInteractions(facturaMapper);
 
     }
@@ -384,18 +389,16 @@ public class FacturaServiceImplTest {
     }
     @Test
     void delete_whenFacturaDoesNotExist_shouldThrowResourceNotFoundException() {
-        // Arrange
         Integer id = 999;
 
         when(facturaRepository.findById(id)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThatThrownBy(() -> facturaService.deleteById(id))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("Factura no encontrada");
 
         verify(facturaRepository).findById(id);
-        verify(facturaRepository, never()).delete(any());
+        verify(facturaRepository, never()).delete(any(Factura.class));
     }
 
     @Test
@@ -415,7 +418,7 @@ public class FacturaServiceImplTest {
                 .hasMessageContaining(ErrorCode.FACTURA_YA_PAGADA.getDefaultMessage());
 
         verify(facturaRepository).findById(id);
-        verify(facturaRepository, never()).delete(any());
+        verify(facturaRepository, never()).delete(any(Factura.class));
     }
 
 }

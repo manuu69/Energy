@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.energy.factura.dto.FacturaCreateDTO;
+import org.example.energy.factura.dto.FacturaFilter;
 import org.example.energy.factura.dto.FacturaResponseDTO;
 import org.example.energy.factura.service.FacturaService;
 import org.springdoc.core.annotations.ParameterObject;
@@ -15,10 +16,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -30,10 +35,25 @@ public class FacturaController {
 
     private final FacturaService facturaService;
 
+    @GetMapping("/export/csv")
+    @Operation(summary = "Exportar facturas filtradas a CSV mediante streaming")
+    public ResponseEntity<StreamingResponseBody> exportCsv(@ParameterObject FacturaFilter filter) {
+        String filename = "facturas_" + LocalDate.now() + ".csv";
+
+        StreamingResponseBody responseBody = facturaService.exportToCsv(filter);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
+                .body(responseBody);
+    }
+
+
     @GetMapping
     @Operation(summary = "Obtener todas las facturas", description = "Devuelve una lista paginada de todas las facturas registradas en el sistema.")
     @ApiResponse(responseCode = "200", description = "Página de facturas recuperada exitosamente")
     public ResponseEntity<Page<FacturaResponseDTO>> getAll(
+            @ParameterObject FacturaFilter filter,
             @ParameterObject
             @PageableDefault(
                     sort = "facturaId",
@@ -41,7 +61,7 @@ public class FacturaController {
             Pageable pageable
     ){
         log.info("GET /api/v1/facturas - Obteniendo facturas paginadas");
-        return ResponseEntity.ok(facturaService.getAll(pageable));
+        return ResponseEntity.ok(facturaService.getAll(filter, pageable));
     }
 
     @GetMapping("/{id}")

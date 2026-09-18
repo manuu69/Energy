@@ -1,5 +1,6 @@
 package org.example.energy.service;
 
+import org.example.energy.cliente.dto.ClienteFilter;
 import org.example.energy.cliente.entity.Cliente;
 import org.example.energy.cliente.repository.ClienteRepository;
 import org.example.energy.common.enums.EstadoContrato;
@@ -7,6 +8,7 @@ import org.example.energy.common.enums.TipoTarifa;
 import org.example.energy.common.exception.type.BusinessRuleException;
 import org.example.energy.common.exception.type.ResourceNotFoundException;
 import org.example.energy.contrato.dto.ContratoCreateDTO;
+import org.example.energy.contrato.dto.ContratoFilter;
 import org.example.energy.contrato.dto.ContratoResponseDTO;
 import org.example.energy.contrato.dto.ContratoUpdateDTO;
 import org.example.energy.contrato.entity.Contrato;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -53,40 +56,42 @@ public class ContratoServiceImplTest {
 
     @Test
     void getAll_ReturnsPage(){
+        ContratoFilter filter = new ContratoFilter(null, null, null, null, null, null, null, null);
         Pageable pageable = PageRequest.of(0,10);
 
         Contrato contrato = ContratoTestData.crearContratoConEstado(EstadoContrato.ACTIVO);
         ContratoResponseDTO dto = crearContratoResponseDTO();
         Page<Contrato> page = new PageImpl<>(List.of(contrato));
 
-        when(contratoRepository.findAll(pageable)).thenReturn(page);
+        when(contratoRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
         when(contratoMapper.toDTO(contrato)).thenReturn(dto);
 
-        Page<ContratoResponseDTO> result = contratoService.getAll(pageable);
+        Page<ContratoResponseDTO> result = contratoService.getAll(filter, pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().getFirst().contratoId()).isEqualTo(dto.contratoId());
         assertThat(result.getTotalElements()).isEqualTo(1);
 
-        verify(contratoRepository).findAll(pageable);
+        verify(contratoRepository).findAll(any(Specification.class), eq(pageable));
         verify(contratoMapper).toDTO(contrato);
     }
 
     @Test
     void getAll_WhenNoContratos_ReturnsEmptyPage(){
+        ContratoFilter filter = new ContratoFilter(null, null, null, null, null, null, null, null);
         Pageable pageable = PageRequest.of(0,10);
         Page<Contrato> page = new PageImpl<>(List.of());
 
-        when(contratoRepository.findAll(pageable)).thenReturn(page);
+        when(contratoRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
 
-        Page<ContratoResponseDTO> result = contratoService.getAll(pageable);
+        Page<ContratoResponseDTO> result = contratoService.getAll(filter, pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getContent()).isEmpty();
         assertThat(result.getTotalElements()).isZero();
 
-        verify(contratoRepository).findAll(pageable);
+        verify(contratoRepository).findAll(any(Specification.class), eq(pageable));
         verifyNoInteractions(contratoMapper);
     }
 
