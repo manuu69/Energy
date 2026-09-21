@@ -2,6 +2,7 @@ package org.example.energy.factura.repository;
 
 import jakarta.persistence.QueryHint;
 import org.example.energy.contrato.entity.Contrato;
+import org.example.energy.factura.dto.FacturaExportDTO;
 import org.example.energy.factura.entity.Factura;
 import org.example.energy.common.enums.EstadoPago;
 import org.springframework.data.jpa.domain.Specification;
@@ -42,9 +43,20 @@ public interface FacturaRepository extends JpaRepository<Factura, Integer>, JpaS
             @Param("estadoVencida") EstadoPago estadoVencida
     );
 
-    @Query("select f from Factura f")
-    @QueryHints(value = {
-            @QueryHint(name = HINT_FETCH_SIZE, value = "1000")
-    })
-    Stream<Factura> streamAll(Specification<Factura> spec);
+    @Query(value = """
+    SELECT
+        f.factura_id,
+        co.contrato_id,
+        c.cliente_id,
+        c.nombre,
+        f.fecha_emision,
+        f.importe,
+        f.estado_pago,
+        f.fecha_vencimiento
+    FROM facturas f
+    JOIN contratos co ON f.contrato_id = co.contrato_id
+    JOIN clientes c   ON co.cliente_id = c.cliente_id
+    """,
+            nativeQuery = true)
+    Stream<FacturaExportDTO> streamAllForExport();
 }

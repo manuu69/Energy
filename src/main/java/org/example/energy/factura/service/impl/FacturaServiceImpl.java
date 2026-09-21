@@ -2,8 +2,8 @@ package org.example.energy.factura.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.energy.contrato.spec.ContratoSpecifications;
 import org.example.energy.factura.dto.FacturaCreateDTO;
+import org.example.energy.factura.dto.FacturaExportDTO;
 import org.example.energy.factura.dto.FacturaFilter;
 import org.example.energy.factura.dto.FacturaResponseDTO;
 import org.example.energy.contrato.entity.Contrato;
@@ -21,6 +21,7 @@ import org.example.energy.factura.spec.FacturaSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -31,6 +32,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -43,52 +45,63 @@ public class FacturaServiceImpl implements FacturaService {
     private final ContratoRepository contratoRepository;
     private final FacturaMapper mapper;
     private final TransactionTemplate transactionTemplate;
+    private final JdbcClient jdbcClient;
 
     private static final Map<EstadoPago, ErrorCode> ESTADOS_NO_PAGABLES = Map.of(
             EstadoPago.PAGADA,    ErrorCode.FACTURA_YA_PAGADA,
             EstadoPago.CANCELADA, ErrorCode.FACTURA_YA_CANCELADA
     );
 
+
+    private static final String EXPORT_QUERY = """
+        SELECT
+            f.factura_id        AS facturaId,
+            co.contrato_id      AS contratoId,
+            c.cliente_id        AS clienteId,
+            c.nombre            AS nombreCliente,
+            f.fecha_emision     AS fechaEmision,
+            f.importe,
+            f.estado_pago       AS estadoPago,
+            f.fecha_vencimiento AS fechaVencimiento
+        FROM facturas f
+        JOIN contratos co ON f.contrato_id = co.contrato_id
+        JOIN clientes c   ON co.cliente_id = c.cliente_id
+        """;
+
     @Override
     public StreamingResponseBody exportToCsv(FacturaFilter filter) {
-        Specification<Factura> spec = FacturaSpecifications.conFiltros(filter);
-
         return outputStream -> {
-            // Marcamos la transacción como de solo lectura
             transactionTemplate.setReadOnly(true);
-
-            // La transacción se mantendrá abierta DENTRO del callback mientras se consume el Stream
             transactionTemplate.executeWithoutResult(status -> {
-                try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
-                     Stream<Factura> facturaStream = facturaRepository.streamAll(spec)) {
+                try (
+                        BufferedWriter writer = new BufferedWriter(
+                                new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)
+                        )
+                ) {
+                    outputStream.write(new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF});
 
-                    // 1. Cabecera
-                    writer.write("FacturaID;ContratoID;ClienteID;FechaEmision;Importe;EstadoPago;FechaVencimiento");
+                    // Cabecera
+                    writer.write("\uFEFF");
+                    writer.write("FacturaID;ContratoID;ClienteID;Cliente;FechaEmision;Importe;EstadoPago;FechaVencimiento");
                     writer.newLine();
 
-                    // 2. Transmisión de filas
-                    facturaStream.forEach(f -> {
-                        try {
-                            String line = String.format("%d;%d;%d;%s;%.2f;%s;%s",
-                                    f.getFacturaId(),
-                                    f.getContrato().getContratoId(),
-                                    f.getContrato().getCliente().getClienteId(),
-                                    f.getFechaEmision(),
-                                    f.getImporte(),
-                                    f.getEstadoPago(),
-                                    f.getFechaVencimiento()
-                            );
-                            writer.write(line);
-                            writer.newLine();
-                        } catch (Exception e) {
-                            log.error("Error escribiendo línea de factura ID={}", f.getFacturaId(), e);
-                        }
-                    });
+                    jdbcClient.sql(EXPORT_QUERY)
+                            .query(FacturaExportDTO.class)
+                            .stream()
+                            .forEach(dto -> {
+                                try {
+                                    writer.write(dto.toCsvLine());  // ← limpio
+                                    writer.newLine();
+                                } catch (Exception e) {
+                                    log.error("Error escribiendo factura ID={}", dto.facturaId(), e);
+                                }
+                            });
 
                     writer.flush();
+
                 } catch (Exception e) {
-                    log.error("Error al exportar CSV de facturas", e);
-                    throw new RuntimeException("Error al generar el archivo CSV", e);
+                    log.error("Error al exportar CSV", e);
+                    throw new RuntimeException("Error al generar CSV", e);
                 }
             });
         };
