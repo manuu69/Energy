@@ -11,6 +11,7 @@ import org.example.energy.factura.controller.FacturaController;
 import org.example.energy.common.error.mapper.ErrorMapper;
 import org.example.energy.factura.service.FacturaService;
 import org.example.energy.testUtil.FacturaTestData;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -18,18 +19,21 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(FacturaController.class)
 @Import({GlobalExceptionHandler.class})
@@ -294,5 +298,29 @@ public class FacturaControllerTest {
                 .andExpect(status().isConflict());
 
         verify(facturaService).deleteById(1);
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/facturas/export/csv - Debe devolver 200 OK y el archivo CSV en streaming")
+    void exportCsv_shouldReturnCsvFileWithCorrectHeaders() throws Exception {
+        StreamingResponseBody mockResponseBody = outputStream -> {
+            outputStream.write("\uFEFF".getBytes());
+            outputStream.write("FacturaID;Cliente\n100;Ana García".getBytes());
+        };
+
+        when(facturaService.exportToCsv(any())).thenReturn(mockResponseBody);
+
+        MvcResult mvcResult = mockMvc.perform(get(API_URL + "/export/csv")
+                        .param("estadoPago", "PAGADA")
+                        .param("clienteId", "1"))
+                .andExpect(request().asyncStarted()) // Verifica que se inicia el proceso asíncrono
+                .andReturn();
+
+        mockMvc.perform(asyncDispatch(mvcResult))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, containsString("attachment; filename=\"facturas_")))
+                .andExpect(content().contentType(MediaType.parseMediaType("text/csv; charset=UTF-8")))
+                .andExpect(content().string(containsString("FacturaID;Cliente")))
+                .andExpect(content().string(containsString("100;Ana García")));
     }
 }

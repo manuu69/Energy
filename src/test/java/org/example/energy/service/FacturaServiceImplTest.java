@@ -2,6 +2,7 @@ package org.example.energy.service;
 
 import org.example.energy.contrato.dto.ContratoFilter;
 import org.example.energy.factura.dto.FacturaCreateDTO;
+import org.example.energy.factura.dto.FacturaExportDTO;
 import org.example.energy.factura.dto.FacturaFilter;
 import org.example.energy.factura.dto.FacturaResponseDTO;
 import org.example.energy.contrato.entity.Contrato;
@@ -25,11 +26,22 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 
+import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -42,6 +54,13 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class FacturaServiceImplTest {
 
+
+    @Mock
+    private JdbcClient jdbcClient;
+
+    @Mock
+    private JdbcClient.StatementSpec statementSpec;
+
     @Mock
     private FacturaRepository facturaRepository;
 
@@ -51,8 +70,55 @@ public class FacturaServiceImplTest {
     @Mock
     private FacturaMapper facturaMapper;
 
+    @Mock
+    private TransactionTemplate transactionTemplate;
     @InjectMocks
     private FacturaServiceImpl facturaService;
+
+    @Test
+    void exportToCsv_shouldWriteCorrectCsvFormat() throws Exception {
+        // Arrange
+        FacturaFilter filter = new FacturaFilter(null, 1, EstadoPago.PAGADA, null, null, null, null, null);
+
+        // 1. Simular la ejecución del TransactionTemplate
+        doAnswer(invocation -> {
+            Consumer<TransactionStatus> action = invocation.getArgument(0);
+            action.accept(mock(TransactionStatus.class));
+            return null;
+        }).when(transactionTemplate).executeWithoutResult(any());
+
+        // 2. Mockear la API fluida de JdbcClient usando lenient() en las llamadas a .param()
+        when(jdbcClient.sql(anyString())).thenReturn(statementSpec);
+        lenient().when(statementSpec.param(anyString(), any())).thenReturn(statementSpec);
+
+        // DTO de prueba
+        FacturaExportDTO dtoPrueba = new FacturaExportDTO(
+                100, 10, 1, "Ana García",
+                LocalDate.of(2026, 9, 1),
+                new BigDecimal("74.50"),
+                "PAGADA",
+                LocalDate.of(2026, 10, 1)
+        );
+
+        // Mockear el resultado del mapping
+        @SuppressWarnings("unchecked")
+        JdbcClient.MappedQuerySpec<FacturaExportDTO> mappedQuerySpec = mock(JdbcClient.MappedQuerySpec.class);
+        when(statementSpec.query(FacturaExportDTO.class)).thenReturn(mappedQuerySpec);
+        when(mappedQuerySpec.stream()).thenReturn(Stream.of(dtoPrueba));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        // Act
+        StreamingResponseBody body = facturaService.exportToCsv(filter);
+        body.writeTo(outputStream);
+
+        String resultCsv = outputStream.toString(StandardCharsets.UTF_8);
+
+        // Assert
+        assertThat(resultCsv).contains("\uFEFF");
+        assertThat(resultCsv).contains("FacturaID;ContratoID;ClienteID;Cliente;FechaEmision;Importe;EstadoPago;FechaVencimiento");
+        assertThat(resultCsv).contains("100;10;1;Ana García;2026-09-01;74.50;PAGADA;2026-10-01");
+    }
 
     @Test
     void getAll_whenFacturasExists_thenReturnPage(){
