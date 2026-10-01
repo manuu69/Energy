@@ -4,8 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.energy.auth.dto.LoginRequest;
 import org.example.energy.auth.dto.AuthResponse;
+import org.example.energy.auth.dto.UserRegisterDTO;
 import org.example.energy.auth.service.AuthService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,5 +26,11 @@ public class AuthController {
         return ResponseEntity.ok(
                 authService.login(request)
         );
+    }
+
+    @PostMapping("/register")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid UserRegisterDTO dto){
+        return ResponseEntity.ok(authService.register(dto));
     }
 }
