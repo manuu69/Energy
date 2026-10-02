@@ -6,6 +6,8 @@ import org.example.energy.common.exception.type.ResourceNotFoundException;
 import org.example.energy.dashboard.controller.ResumenFacturacionClienteController;
 import org.example.energy.dashboard.dto.ResumenFacturacionClienteResponseDTO;
 import org.example.energy.dashboard.service.ResumenFacturacionClienteService;
+import org.example.energy.security.filter.JwtAuthenticationFilter;
+import org.example.energy.security.service.JwtService;
 import org.example.energy.testUtil.ResumenFacturacionClienteTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -38,6 +41,15 @@ public class ResumenFacturacionClienteControllerTest {
 
     @MockitoBean
     private ErrorMapper errorMapper;
+
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @MockitoBean
     private ResumenFacturacionClienteService resumenService;

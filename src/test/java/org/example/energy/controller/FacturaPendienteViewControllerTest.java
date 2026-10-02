@@ -4,11 +4,14 @@ import org.example.energy.factura.controller.FacturaPendienteViewController;
 import org.example.energy.factura.dto.FacturaResponseDTO;
 import org.example.energy.common.error.mapper.ErrorMapper;
 import org.example.energy.factura.service.FacturaPendienteViewService;
+import org.example.energy.security.filter.JwtAuthenticationFilter;
+import org.example.energy.security.service.JwtService;
 import org.example.energy.testUtil.FacturaTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
@@ -35,6 +38,15 @@ public class FacturaPendienteViewControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @MockitoBean
     private FacturaPendienteViewService facturaPendienteService;

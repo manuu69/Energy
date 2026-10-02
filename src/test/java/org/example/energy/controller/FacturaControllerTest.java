@@ -10,6 +10,8 @@ import org.example.energy.common.exception.type.ResourceNotFoundException;
 import org.example.energy.factura.controller.FacturaController;
 import org.example.energy.common.error.mapper.ErrorMapper;
 import org.example.energy.factura.service.FacturaService;
+import org.example.energy.security.filter.JwtAuthenticationFilter;
+import org.example.energy.security.service.JwtService;
 import org.example.energy.testUtil.FacturaTestData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -51,6 +54,15 @@ public class FacturaControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @MockitoBean
     private FacturaService facturaService;

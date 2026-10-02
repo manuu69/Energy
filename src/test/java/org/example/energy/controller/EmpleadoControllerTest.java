@@ -11,6 +11,8 @@ import org.example.energy.empleado.dto.EmpleadoCreateDTO;
 import org.example.energy.empleado.dto.EmpleadoResponseDTO;
 import org.example.energy.empleado.dto.EmpleadoUpdateDTO;
 import org.example.energy.empleado.service.EmpleadoService;
+import org.example.energy.security.filter.JwtAuthenticationFilter;
+import org.example.energy.security.service.JwtService;
 import org.example.energy.testUtil.EmpleadoTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -51,6 +54,15 @@ public class EmpleadoControllerTest {
 
     /*@MockitoBean
     private ObjectMapper objectMapper;*/
+
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @MockitoBean
     private EmpleadoService empleadoService;
