@@ -7,6 +7,7 @@ import org.example.energy.factura.service.FacturaPendienteViewService;
 import org.example.energy.testUtil.FacturaTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,7 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(FacturaPendienteViewController.class)
-public class FacturaPendienteViewControlloerTest {
+@AutoConfigureMockMvc(addFilters = false)
+public class FacturaPendienteViewControllerTest {
 
     private final static String API_URL = "/facturas/pendientes";
 

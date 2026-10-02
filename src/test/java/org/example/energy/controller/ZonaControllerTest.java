@@ -3,6 +3,8 @@ package org.example.energy.controller;
 import org.example.energy.common.error.mapper.ErrorMapper;
 import org.example.energy.common.exception.handler.GlobalExceptionHandler;
 import org.example.energy.common.exception.type.ResourceNotFoundException;
+import org.example.energy.security.filter.JwtAuthenticationFilter;
+import org.example.energy.security.service.JwtService;
 import org.example.energy.testUtil.ZonaTestData;
 import org.example.energy.zona.controller.ZonaController;
 import org.example.energy.zona.dto.ZonaResponseDTO;
@@ -22,7 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = ZonaController.class, properties = "spring.mvc.api-prefix=/api/v1")
+@WebMvcTest(controllers = ZonaController.class)
 @Import({GlobalExceptionHandler.class})
 public class ZonaControllerTest {
 
@@ -34,13 +36,18 @@ public class ZonaControllerTest {
     @MockitoBean
     private ErrorMapper errorMapper;
 
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Autowired
     private ObjectMapper objectMapper;
 
     @MockitoBean
     private  ZonaService zonaService;
 
-    // GET BY ID
     @Test
     void getById_whenZonaExists_returns200() throws Exception {
         ZonaResponseDTO dto = ZonaTestData.crearZonaResponseDTO();

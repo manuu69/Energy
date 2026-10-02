@@ -7,19 +7,21 @@ import org.example.energy.cliente.dto.ClienteResponseDTO;
 import org.example.energy.cliente.dto.ClienteUpdateDTO;
 import org.example.energy.cliente.service.ClienteService;
 import org.example.energy.common.error.mapper.ErrorMapper;
-import org.example.energy.common.exception.code.ErrorCode;
 import org.example.energy.common.exception.handler.GlobalExceptionHandler;
-import org.example.energy.common.exception.type.BusinessRuleException;
 import org.example.energy.common.exception.type.ResourceNotFoundException;
+import org.example.energy.security.filter.JwtAuthenticationFilter;
+import org.example.energy.security.service.JwtService;
 import org.example.energy.testUtil.ClienteTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
@@ -30,10 +32,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ClienteController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import({GlobalExceptionHandler.class})
 public class ClienteControllerTest {
 
@@ -49,10 +53,20 @@ public class ClienteControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
+    private UserDetailsService userDetailsService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockitoBean
     private ClienteService clienteService;
 
     // GET BY ID
     @Test
+    //@WithMockUser(roles = "ADMIN")
     void getById_whenClienteExists_returns200() throws Exception {
         ClienteResponseDTO dto = ClienteTestData.crearClienteResponseDTO();
 
@@ -97,6 +111,7 @@ public class ClienteControllerTest {
                         .param("ciudad", "Murcia")
                         .param("page", "0")
                         .param("size", "10"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content[0].clienteId").value(1));
@@ -109,6 +124,7 @@ public class ClienteControllerTest {
         when(clienteService.getAll(any(ClienteFilter.class), any(Pageable.class))).thenReturn(Page.empty());
 
         mockMvc.perform(get(API_URL))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content").isEmpty());
