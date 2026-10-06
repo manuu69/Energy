@@ -43,7 +43,6 @@ public class EmpleadoController {
                     direction = Sort.Direction.ASC)
             Pageable pageable
     ){
-        log.info("Solicitud paginada para obtener todos los empleados");
         return ResponseEntity.ok(empleadoService.getAll(pageable));
     }
 
@@ -54,7 +53,6 @@ public class EmpleadoController {
             @ApiResponse(responseCode = "404", description = "Empleado no encontrado para el ID especificado")
     })
     public ResponseEntity<EmpleadoResponseDTO> getById(@PathVariable Integer id){
-        log.info("Solicitud para obtener el empleado con ID: {}", id);
         return ResponseEntity.ok().body(empleadoService.getById(id));
     }
 
@@ -62,7 +60,6 @@ public class EmpleadoController {
     @Operation(summary = "Filtrar empleados por rol", description = "Obtiene la lista de empleados asociados a un rol específico dentro del sistema.")
     @ApiResponse(responseCode = "200", description = "Lista de empleados filtrada por rol recuperada exitosamente")
     public ResponseEntity<List<EmpleadoResponseDTO>> getByRol(@RequestParam RolEmpleado rol){
-        log.info("Solicitud para obtener empleados por rol: {}", rol);
         return ResponseEntity.ok().body(empleadoService.getByRol(rol));
     }
 
@@ -70,7 +67,6 @@ public class EmpleadoController {
     @Operation(summary = "Filtrar empleados por departamento", description = "Devuelve la lista de empleados pertenecientes al departamento especificado.")
     @ApiResponse(responseCode = "200", description = "Lista de empleados filtrada por departamento recuperada exitosamente")
     public ResponseEntity<List<EmpleadoResponseDTO>> getByDepartamento(@RequestParam Departamento departamento){
-        log.info("Solicitud para obtener empleados por departamento: {}", departamento);
         return ResponseEntity.ok().body(empleadoService.getByDepartamento(departamento));
     }
 
@@ -81,7 +77,6 @@ public class EmpleadoController {
             @ApiResponse(responseCode = "404", description = "Empleado supervisor no encontrado")
     })
     public ResponseEntity<List<EmpleadoResponseDTO>> getBySubordinado(@PathVariable Integer id){
-        log.info("Solicitud para obtener los subordinados del empleado con ID: {}", id);
         return ResponseEntity.ok().body(empleadoService.getBySubordinados(id));
     }
 
@@ -92,7 +87,6 @@ public class EmpleadoController {
             @ApiResponse(responseCode = "400", description = "Petición inválida debido a errores de validación")
     })
     public ResponseEntity<EmpleadoResponseDTO> create(@Valid @RequestBody EmpleadoCreateDTO dto){
-        log.info("Solicitud de creación para un nuevo empleado");
         return ResponseEntity.status(HttpStatus.CREATED).body(empleadoService.create(dto));
     }
 
@@ -104,7 +98,6 @@ public class EmpleadoController {
             @ApiResponse(responseCode = "404", description = "Empleado no encontrado")
     })
     public ResponseEntity<EmpleadoResponseDTO> update(@PathVariable Integer id, @Valid @RequestBody EmpleadoUpdateDTO dto){
-        log.info("Solicitud de actualización para el empleado con ID: {}", id);
         return ResponseEntity.ok().body(empleadoService.update(id, dto));
     }
 
@@ -115,7 +108,6 @@ public class EmpleadoController {
             @ApiResponse(responseCode = "404", description = "Empleado no encontrado")
     })
     public ResponseEntity<Void> deleteById(@PathVariable Integer id){
-        log.info("Solicitud para eliminar el empleado con ID: {}", id);
         empleadoService.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -45,7 +45,6 @@ public class IncidenciaController {
                     direction = Sort.Direction.ASC)
             Pageable pageable
     ){
-        log.info("GET /api/v1/incidencias - Obteniendo todas las incidencias paginadas");
         return ResponseEntity.ok().body(incidenciaService.getAll(pageable));
     }
 
@@ -60,7 +59,6 @@ public class IncidenciaController {
                     direction = Sort.Direction.ASC)
             Pageable pageable
     ){
-        log.info("GET /api/v1/incidencias/contrato/{} - Consultando incidencias por contrato ID", id);
         return ResponseEntity.ok().body(incidenciaService.getByContratoId(id, pageable));
     }
 
@@ -76,7 +74,6 @@ public class IncidenciaController {
                     direction = Sort.Direction.ASC
             ) Pageable pageable
     ) {
-        log.info("GET /api/v1/incidencias/estado/{} - Consultando incidencias por estado", estado);
         return ResponseEntity.ok(
                 incidenciaService.getByEstado(estado, pageable)
         );
@@ -94,7 +91,6 @@ public class IncidenciaController {
                     direction = Sort.Direction.ASC
             ) Pageable pageable
     ) {
-        log.info("GET /api/v1/incidencias/tipo/{} - Consultando incidencias por tipo", tipo);
         return ResponseEntity.ok(
                 incidenciaService.getByTipo(tipo, pageable)
         );
@@ -107,7 +103,6 @@ public class IncidenciaController {
             @ApiResponse(responseCode = "404", description = "Incidencia no encontrada")
     })
     public ResponseEntity<IncidenciaResponseDTO> getById(@PathVariable Integer id){
-        log.info("GET /api/v1/incidencias/{} - Obteniendo detalle de incidencia", id);
         return ResponseEntity.ok().body(incidenciaService.getById(id));
     }
 
@@ -117,7 +112,6 @@ public class IncidenciaController {
     public ResponseEntity<IncidenciaResponseDTO> create(
             @RequestBody @Valid IncidenciaCreateDTO dto
     ) {
-        log.info("POST /api/v1/incidencias - Registrando incidencia para contrato ID: {}", dto.contratoId());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(incidenciaService.create(dto));
@@ -131,7 +125,6 @@ public class IncidenciaController {
             @ApiResponse(responseCode = "404", description = "Incidencia no encontrada")
     })
     public ResponseEntity<IncidenciaResponseDTO> update(@PathVariable Integer id, @RequestBody @Valid IncidenciaUpdateDTO dto){
-        log.info("PUT /api/v1/incidencias/{} - Actualizando incidencia", id);
         return ResponseEntity.ok().body(incidenciaService.update(id, dto));
     }
 
@@ -142,7 +135,6 @@ public class IncidenciaController {
             @ApiResponse(responseCode = "404", description = "Incidencia no encontrada")
     })
     public ResponseEntity<IncidenciaResponseDTO> iniciarGestion(@PathVariable Integer id){
-        log.info("PATCH /api/v1/incidencias/{}/iniciarGestion - Iniciando gestión", id);
         return ResponseEntity.ok().body(incidenciaService.iniciarGestion(id));
     }
 
@@ -153,7 +145,6 @@ public class IncidenciaController {
             @ApiResponse(responseCode = "404", description = "Incidencia no encontrada")
     })
     public ResponseEntity<IncidenciaResponseDTO> cerrar(@PathVariable Integer id){
-        log.info("PATCH /api/v1/incidencias/{}/cerrar - Solicitud de cierre de incidencia", id);
         return ResponseEntity.ok().body(incidenciaService.cerrar(id));
     }
 
@@ -161,7 +152,6 @@ public class IncidenciaController {
     @Operation(summary = "Obtener incidencias críticas", description = "Devuelve el listado de incidencias etiquetadas como críticas o de alta prioridad.")
     @ApiResponse(responseCode = "200", description = "Incidencias críticas recuperadas exitosamente")
     public ResponseEntity<List<IncidenciaCriticaDTO>> getCriticas() {
-        log.info("GET /api/v1/incidencias/criticas - Obteniendo incidencias críticas globales");
         return ResponseEntity.ok(incidenciaService.getIncidenciasCriticas());
     }
 
@@ -170,7 +160,6 @@ public class IncidenciaController {
     @ApiResponse(responseCode = "200", description = "Incidencias críticas del contrato recuperadas exitosamente")
     public ResponseEntity<List<IncidenciaCriticaDTO>> getCriticasByContrato(
             @PathVariable Integer id) {
-        log.info("GET /api/v1/incidencias/criticas/contrato/{} - Consultando incidencias críticas por contrato ID", id);
         return ResponseEntity.ok(incidenciaService.getIncidenciasCriticasByContrato(id));
     }
 }

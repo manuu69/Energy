@@ -11,6 +11,7 @@ import org.example.energy.zona.dto.ZonaResponseDTO;
 import org.example.energy.zona.service.ZonaService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -25,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ZonaController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import({GlobalExceptionHandler.class})
 public class ZonaControllerTest {
 
@@ -48,7 +50,7 @@ public class ZonaControllerTest {
     @MockitoBean
     private  ZonaService zonaService;
 
-    /*@Test
+    @Test
     void getById_whenZonaExists_returns200() throws Exception {
         ZonaResponseDTO dto = ZonaTestData.crearZonaResponseDTO();
 
@@ -56,7 +58,7 @@ public class ZonaControllerTest {
 
         mockMvc.perform(get(API_URL + "/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.zona.zonaId").value(1));
+                .andExpect(jsonPath("$.zonaId").value(1));
 
         verify(zonaService).findById(1);
     }
@@ -85,7 +87,7 @@ public class ZonaControllerTest {
                 .andExpect(jsonPath("$.[0].zonaId").value(1));
 
         verify(zonaService).findAll();
-    }*/
+    }
 
 
 }

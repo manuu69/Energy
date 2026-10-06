@@ -26,7 +26,6 @@ public class ZonaController {
     @Operation(summary = "Obtener todas las zonas", description = "Devuelve el listado completo de zonas de distribución configuradas en el sistema.")
     @ApiResponse(responseCode = "200", description = "Lista de zonas recuperada exitosamente")
     public ResponseEntity<List<ZonaResponseDTO>> getAll(){
-        log.info("GET /api/v1/zonas - Solicitud para obtener todas las zonas");
         return ResponseEntity.ok(zonaService.findAll());
     }
 
@@ -37,7 +36,6 @@ public class ZonaController {
             @ApiResponse(responseCode = "404", description = "Zona no encontrada")
     })
     public ResponseEntity<ZonaResponseDTO> getById(@PathVariable Integer id){
-        log.info("GET /api/v1/zonas/{} - Obteniendo detalle de la zona", id);
         return ResponseEntity.ok(zonaService.findById(id));
     }
 

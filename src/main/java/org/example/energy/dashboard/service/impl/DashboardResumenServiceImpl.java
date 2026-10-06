@@ -18,61 +18,78 @@ import java.util.List;
 public class DashboardResumenServiceImpl implements DashboardResumenService {
 
     private final DashboardResumenViewRepository dashboardRepository;
-    //private final DashboardResumenViewMapper dashboardMapper;
 
-    /**
-     * @return
-     */
     @Override
     @Transactional(readOnly = true)
     public DashboardResumenDTO getResumen() {
-        return dashboardRepository.getResumen()
-                .orElseThrow(() -> new ResourceNotFoundException("No hay nigun dashboard"));
-    }
+        log.debug("Consultando datos generales del dashboard");
 
+        DashboardResumenDTO resumen = dashboardRepository.getResumen()
+                .orElseThrow(() -> {
+                    log.warn("No se encontraron datos para generar el dashboard");
+                    return new ResourceNotFoundException("No hay ningun dashboard");
+                });
+
+        log.info("Datos generales del dashboard obtenidos correctamente");
+        return resumen;
+    }
 
     @Override
     @Transactional(readOnly = true)
     public List<TopDeudorDTO> getDeudores(int limit) {
-        return dashboardRepository.getTopDeudor(limit);
+        log.debug("Consultando top deudores con limit={}", limit);
+
+        List<TopDeudorDTO> deudores = dashboardRepository.getTopDeudor(limit);
+
+        log.info("Consulta de top deudores realizada. Resultados encontrados: total={}", deudores.size());
+        return deudores;
     }
 
-    /**
-     * @param mes
-     * @return
-     */
     @Override
     @Transactional(readOnly = true)
     public FacturacionMensualDTO getFacturacionMensual(int mes) {
-        return dashboardRepository.getFacturacionMensual(mes)
-                .orElseThrow(() -> new ResourceNotFoundException("Ninguna factura encontrada para el mes: " + mes));
+        log.debug("Consultando facturación mensual para mes={}", mes);
+
+        FacturacionMensualDTO facturacion = dashboardRepository.getFacturacionMensual(mes)
+                .orElseThrow(() -> {
+                    log.warn("No se encontró facturación mensual para el mes={}", mes);
+                    return new ResourceNotFoundException("Ninguna factura encontrada para el mes: " + mes);
+                });
+
+        log.info("Facturación mensual obtenida correctamente para mes={}", mes);
+        return facturacion;
     }
 
-    /**
-     * @param tipoCliente
-     * @return
-     */
     @Override
     @Transactional(readOnly = true)
     public Long countByTipoCliente(TipoCliente tipoCliente) {
-        return dashboardRepository.countClienteByTipo(tipoCliente);
+        log.debug("Contando clientes por tipoCliente={}", tipoCliente);
+
+        Long total = dashboardRepository.countClienteByTipo(tipoCliente);
+
+        log.info("Conteo de clientes por tipoCliente={} realizado. Total={}", tipoCliente, total);
+        return total;
     }
 
-    /**
-     * @return
-     */
     @Override
     @Transactional(readOnly = true)
     public List<IncidenciaPorTipoDTO> getIncidenciaByTipo() {
-        return dashboardRepository.getByTipoIncidencia();
+        log.debug("Consultando incidencias agrupadas por tipo");
+
+        List<IncidenciaPorTipoDTO> incidencias = dashboardRepository.getByTipoIncidencia();
+
+        log.info("Consulta de incidencias por tipo realizada. Registros obtenidos={}", incidencias.size());
+        return incidencias;
     }
 
-    /**
-     * @return
-     */
     @Override
     @Transactional(readOnly = true)
     public List<ConsumoPorZonaDTO> getConsumoPorZona() {
-        return dashboardRepository.getConsumoPorZona();
+        log.debug("Consultando consumos agrupados por zona");
+
+        List<ConsumoPorZonaDTO> consumos = dashboardRepository.getConsumoPorZona();
+
+        log.info("Consulta de consumo por zona realizada. Zonas obtenidas={}", consumos.size());
+        return consumos;
     }
 }

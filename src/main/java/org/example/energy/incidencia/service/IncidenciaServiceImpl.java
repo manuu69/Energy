@@ -35,72 +35,113 @@ public class IncidenciaServiceImpl implements IncidenciaService {
     private final ContratoRepository contratoRepository;
     private final IncidenciaMapper incidenciaMapper;
 
-
-    /**
-     * @param pageable
-     * @return
-     */
     @Override
+    @Transactional(readOnly = true)
     public Page<IncidenciaResponseDTO> getAll(Pageable pageable) {
+        log.debug(
+                "Consultando incidencias paginadas. page={}, size={}, sort={}",
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+
         Page<Incidencia> incidencias = incidenciaRepository.findAll(pageable);
 
+        log.info(
+                "Consulta de incidencias realizada. totalElements={}, totalPages={}, currentPage={}",
+                incidencias.getTotalElements(),
+                incidencias.getTotalPages(),
+                incidencias.getNumber()
+        );
+
         return incidencias.map(incidenciaMapper::toDTO);
     }
 
-    /**
-     * @param pageable
-     * @return
-     */
     @Override
+    @Transactional(readOnly = true)
     public Page<IncidenciaResponseDTO> getByContratoId(Integer contratoId, Pageable pageable) {
+        log.debug(
+                "Consultando incidencias para el contrato id={}. page={}, size={}",
+                contratoId,
+                pageable.getPageNumber(),
+                pageable.getPageSize()
+        );
+
         Page<Incidencia> incidencias = incidenciaRepository.findByContratoContratoId(contratoId, pageable);
 
+        log.info(
+                "Consulta de incidencias por contrato realizada. contratoId={}, totalElements={}, totalPages={}",
+                contratoId,
+                incidencias.getTotalElements(),
+                incidencias.getTotalPages()
+        );
+
         return incidencias.map(incidenciaMapper::toDTO);
     }
 
-    /**
-     * @param pageable
-     * @return
-     */
     @Override
+    @Transactional(readOnly = true)
     public Page<IncidenciaResponseDTO> getByEstado(EstadoIncidencia estado, Pageable pageable) {
+        log.debug(
+                "Consultando incidencias por estado={}. page={}, size={}",
+                estado,
+                pageable.getPageNumber(),
+                pageable.getPageSize()
+        );
+
         Page<Incidencia> incidencias = incidenciaRepository.findByEstado(estado, pageable);
 
+        log.info(
+                "Consulta de incidencias por estado realizada. estado={}, totalElements={}, totalPages={}",
+                estado,
+                incidencias.getTotalElements(),
+                incidencias.getTotalPages()
+        );
+
         return incidencias.map(incidenciaMapper::toDTO);
     }
 
-    /**
-     * @param pageable
-     * @return
-     */
     @Override
+    @Transactional(readOnly = true)
     public Page<IncidenciaResponseDTO> getByTipo(TipoIncidencia tipo, Pageable pageable) {
+        log.debug(
+                "Consultando incidencias por tipo={}. page={}, size={}",
+                tipo,
+                pageable.getPageNumber(),
+                pageable.getPageSize()
+        );
+
         Page<Incidencia> incidencias = incidenciaRepository.findByTipo(tipo, pageable);
 
+        log.info(
+                "Consulta de incidencias por tipo realizada. tipo={}, totalElements={}, totalPages={}",
+                tipo,
+                incidencias.getTotalElements(),
+                incidencias.getTotalPages()
+        );
+
         return incidencias.map(incidenciaMapper::toDTO);
     }
 
-    /**
-     * @param id
-     * @return
-     */
     @Override
+    @Transactional(readOnly = true)
     public IncidenciaResponseDTO getById(Integer id) {
+        log.debug("Buscando incidencia con id={}", id);
+
         Incidencia incidencia = getIncidenciaById(id);
         return incidenciaMapper.toDTO(incidencia);
     }
 
-    /**
-     * @param dto
-     * @return dto
-     */
     @Override
     @Transactional
     public IncidenciaResponseDTO create(IncidenciaCreateDTO dto) {
+        log.info("Iniciando creación de incidencia para contrato id={}", dto.contratoId());
+
         Contrato contrato = contratoRepository.findById(dto.contratoId())
-                .orElseThrow(() ->
-                    new ResourceNotFoundException("Contrato no encontrado con el id: " + dto.contratoId())
-                );
+                .orElseThrow(() -> {
+                    log.warn("No se encontró contrato con id={}", dto.contratoId());
+                    return new ResourceNotFoundException("Contrato no encontrado con el id: " + dto.contratoId());
+                });
 
         Incidencia incidencia = incidenciaMapper.toEntity(dto);
 
@@ -110,27 +151,32 @@ public class IncidenciaServiceImpl implements IncidenciaService {
         incidencia.setFechaCierre(null);
 
         Incidencia saved = incidenciaRepository.save(incidencia);
+
+        log.info(
+                "Incidencia creada correctamente. incidenciaId={}, contratoId={}",
+                saved.getIncidenciaId(),
+                dto.contratoId()
+        );
+
         return incidenciaMapper.toDTO(saved);
     }
 
-    /**
-     * @param id
-     * @param dto
-     * @return
-     */
     @Override
     @Transactional
     public IncidenciaResponseDTO update(Integer id, IncidenciaUpdateDTO dto) {
+        log.info("Iniciando actualización de incidencia id={}", id);
+
         Incidencia incidencia = getIncidenciaById(id);
 
+        log.debug("Incidencia encontrada para actualización. incidenciaId={}", id);
+
         incidenciaMapper.updateEntityFromDTO(dto, incidencia);
+
+        log.info("Incidencia id={} actualizada correctamente", id);
+
         return incidenciaMapper.toDTO(incidencia);
     }
 
-    /**
-     * @param id
-     * @return
-     */
     @Override
     @Transactional
     public IncidenciaResponseDTO iniciarGestion(Integer id) {
@@ -138,20 +184,20 @@ public class IncidenciaServiceImpl implements IncidenciaService {
 
         Incidencia incidencia = getIncidenciaById(id);
 
-        if (incidencia.getEstado() == EstadoIncidencia.EN_GESTION) {
-            log.warn("La incidencia id={} ya se encuentra en gestión", id);
+        log.debug(
+                "Incidencia encontrada para puesta en gestión. incidenciaId={}, estadoActual={}",
+                id,
+                incidencia.getEstado()
+        );
 
-            throw new BusinessRuleException(
-                    ErrorCode.INCIDENCIA_YA_EN_GESTION
-            );
+        if (incidencia.getEstado() == EstadoIncidencia.EN_GESTION) {
+            log.warn("Puesta en gestión rechazada. La incidencia id={} ya se encuentra en gestión", id);
+            throw new BusinessRuleException(ErrorCode.INCIDENCIA_YA_EN_GESTION);
         }
 
         if (incidencia.getEstado() == EstadoIncidencia.CERRADA) {
-            log.warn("No se puede iniciar la gestión de la incidencia id={} porque ya está cerrada", id);
-
-            throw new BusinessRuleException(
-                    ErrorCode.INCIDENCIA_YA_CERRADA
-            );
+            log.warn("Puesta en gestión rechazada. La incidencia id={} ya está cerrada", id);
+            throw new BusinessRuleException(ErrorCode.INCIDENCIA_YA_CERRADA);
         }
 
         incidencia.setEstado(EstadoIncidencia.EN_GESTION);
@@ -161,23 +207,22 @@ public class IncidenciaServiceImpl implements IncidenciaService {
         return incidenciaMapper.toDTO(incidencia);
     }
 
-    /**
-     * @param id
-     * @return
-     */
     @Override
     @Transactional
     public IncidenciaResponseDTO cerrar(Integer id) {
-        log.info("Iniciando gestión de cerrar de la incidencia id={}", id);
+        log.info("Iniciando proceso de cierre de la incidencia id={}", id);
 
         Incidencia incidencia = getIncidenciaById(id);
 
-        if (incidencia.getEstado() == EstadoIncidencia.CERRADA) {
-            log.warn("No se puede cerrar la incidencia id={} porque ya está cerrada", id);
+        log.debug(
+                "Incidencia encontrada para cierre. incidenciaId={}, estadoActual={}",
+                id,
+                incidencia.getEstado()
+        );
 
-            throw new BusinessRuleException(
-                    ErrorCode.INCIDENCIA_YA_CERRADA
-            );
+        if (incidencia.getEstado() == EstadoIncidencia.CERRADA) {
+            log.warn("Cierre rechazado. La incidencia id={} ya está cerrada", id);
+            throw new BusinessRuleException(ErrorCode.INCIDENCIA_YA_CERRADA);
         }
 
         incidencia.setEstado(EstadoIncidencia.CERRADA);
@@ -188,41 +233,50 @@ public class IncidenciaServiceImpl implements IncidenciaService {
         return incidenciaMapper.toDTO(incidencia);
     }
 
-    /**
-     * @return
-     */
     @Override
+    @Transactional(readOnly = true)
     public List<IncidenciaCriticaDTO> getIncidenciasCriticas() {
-        return incidenciaCriticaRepository
+        log.debug("Consultando todas las incidencias críticas");
+
+        List<IncidenciaCriticaDTO> criticas = incidenciaCriticaRepository
                 .findAll()
-                .stream().map(incidenciaMapper::toCriticaDTO)
+                .stream()
+                .map(incidenciaMapper::toCriticaDTO)
                 .toList();
+
+        log.info("Consulta de incidencias críticas realizada. Total encontradas={}", criticas.size());
+
+        return criticas;
     }
 
-    /**
-     * @param contratoId
-     * @return
-     */
     @Override
+    @Transactional(readOnly = true)
     public List<IncidenciaCriticaDTO> getIncidenciasCriticasByContrato(Integer contratoId) {
-        if (!contratoRepository.existsById(contratoId)){
+        log.debug("Consultando incidencias críticas para contrato id={}", contratoId);
+
+        if (!contratoRepository.existsById(contratoId)) {
+            log.warn("Consulta de críticas rechazada. No existe contrato con id={}", contratoId);
             throw new ResourceNotFoundException("Contrato no encontrado con el id: " + contratoId);
         }
 
-        return incidenciaCriticaRepository.findByContratoId(contratoId)
-                .stream().map(incidenciaMapper::toCriticaDTO)
+        List<IncidenciaCriticaDTO> criticas = incidenciaCriticaRepository.findByContratoId(contratoId)
+                .stream()
+                .map(incidenciaMapper::toCriticaDTO)
                 .toList();
+
+        log.info(
+                "Consulta de incidencias críticas por contrato realizada. contratoId={}, totalEncontradas={}",
+                contratoId,
+                criticas.size()
+        );
+
+        return criticas;
     }
 
-    /**
-     * @param id
-     * @return
-     */
-    private Incidencia getIncidenciaById(Integer id){
+    private Incidencia getIncidenciaById(Integer id) {
         return incidenciaRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Incidencia no encontrada con id={}", id);
-
                     return new ResourceNotFoundException(
                             "Incidencia no encontrada con el ID: " + id
                     );

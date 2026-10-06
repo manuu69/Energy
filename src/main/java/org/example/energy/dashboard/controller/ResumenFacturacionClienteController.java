@@ -39,7 +39,6 @@ public class ResumenFacturacionClienteController {
                     direction = Sort.Direction.ASC
             ) Pageable pageable
     ) {
-        log.info("Get all llamado de ");
         return ResponseEntity.ok(service.getAll(pageable));
     }
 

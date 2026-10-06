@@ -25,6 +25,7 @@ public class HistoricoTarifaServiceImpl implements HistoricoTarifaService{
     @Override
     @Transactional(readOnly = true)
     public List<HistoricoTarifaResponseDTO> getByContratoId(Integer contratoId) {
+        log.debug("Buscando tarifa perteneciente al contrato con id={}", contratoId);
         return historicoTarifaRepository.findByContratoId(contratoId);
     }
 }

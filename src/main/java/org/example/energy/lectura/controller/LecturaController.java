@@ -43,7 +43,6 @@ public class LecturaController {
                     direction = Sort.Direction.ASC)
             Pageable pageable
     ){
-        log.info("GET /api/v1/lecturas - Solicitud de obtención de lecturas paginadas");
         return ResponseEntity.ok(lecturaService.getAll(pageable));
     }
 
@@ -54,7 +53,6 @@ public class LecturaController {
             @ApiResponse(responseCode = "404", description = "Lectura no encontrada")
     })
     public ResponseEntity<LecturaResponseDTO> getById(@PathVariable Integer id){
-        log.info("GET /api/v1/lecturas/{} - Solicitud de lectura por ID", id);
         return ResponseEntity.ok(lecturaService.getById(id));
     }
 
@@ -69,7 +67,6 @@ public class LecturaController {
                     direction = Sort.Direction.ASC)
             Pageable pageable)
     {
-        log.info("GET /api/v1/lecturas/contrato/{} - Obteniendo lecturas por contrato ID", id);
         return ResponseEntity.ok(lecturaService.getByContratoId(id, pageable));
     }
 
@@ -80,7 +77,6 @@ public class LecturaController {
             @ApiResponse(responseCode = "400", description = "Datos de lectura inválidos")
     })
     public ResponseEntity<LecturaResponseDTO> create(@RequestBody @Valid LecturaCreateDTO dto){
-        log.info("POST /api/v1/lecturas - Registrando nueva lectura para contrato ID: {}", dto.contratoId());
         return ResponseEntity.status(HttpStatus.CREATED).body(lecturaService.create(dto));
     }
 
@@ -92,7 +88,6 @@ public class LecturaController {
             @ApiResponse(responseCode = "404", description = "Lectura no encontrada")
     })
     public ResponseEntity<LecturaResponseDTO> update(@PathVariable Integer id, @RequestBody @Valid LecturaUpdateDTO dto){
-        log.info("PUT /api/v1/lecturas/{} - Solicitud de actualización de lectura", id);
         return ResponseEntity.ok().body(lecturaService.update(dto, id));
     }
 
@@ -103,7 +98,6 @@ public class LecturaController {
             @ApiResponse(responseCode = "404", description = "Lectura no encontrada")
     })
     public ResponseEntity<Void> deleteById(@PathVariable Integer id){
-        log.info("DELETE /api/v1/lecturas/{} - Eliminando lectura", id);
         lecturaService.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -112,7 +106,6 @@ public class LecturaController {
     @Operation(summary = "Obtener análisis general de lecturas", description = "Devuelve el análisis consolidado sobre consumos y patrones de lecturas.")
     @ApiResponse(responseCode = "200", description = "Análisis de lecturas obtenido exitosamente")
     public ResponseEntity<List<LecturaAnalisisDTO>> getAnalisis() {
-        log.info("GET /api/v1/lecturas/analisis - Obteniendo análisis general de lecturas");
         return ResponseEntity.ok(lecturaService.getAnalisis());
     }
 
@@ -121,7 +114,6 @@ public class LecturaController {
     @ApiResponse(responseCode = "200", description = "Análisis por contrato recuperado exitosamente")
     public ResponseEntity<List<LecturaAnalisisDTO>> getAnalisisByContrato(
             @PathVariable Integer id) {
-        log.info("GET /api/v1/lecturas/analisis/contrato/{} - Obteniendo análisis para contrato ID", id);
         return ResponseEntity.ok(lecturaService.getAnalisisByContrato(id));
     }
 
@@ -130,7 +122,6 @@ public class LecturaController {
     @ApiResponse(responseCode = "200", description = "Anomalías detectadas recuperadas exitosamente")
     public ResponseEntity<List<LecturaAnalisisDTO>> getAnomalias(
             @RequestParam(required = false) BigDecimal umbral) {
-        log.info("GET /api/v1/lecturas/analisis/anomalias - Detectando anomalías con umbral: {}", umbral);
         return ResponseEntity.ok(lecturaService.getAnomalias(umbral));
     }
 }
